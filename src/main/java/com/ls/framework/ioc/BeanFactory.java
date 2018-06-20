@@ -1,6 +1,8 @@
 package com.ls.framework.ioc;
 
-import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.ls.framework.annotation.LSBean;
 import com.ls.framework.exception.DiException;
 import com.ls.framework.utils.ClassUtil;
@@ -8,13 +10,9 @@ import com.ls.framework.utils.ConvertUtil;
 import com.ls.framework.utils.CollectionKit;
 import com.ls.framework.utils.StringKit;
 import com.ls.framework.annotation.LSController;
-import org.junit.Test;
 
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,8 +30,7 @@ public class BeanFactory {
         byte[] buffer = new byte[inputStream.available()];
         inputStream.read(buffer);
         inputStream.close();
-
-        List<BeanInfo> beanInfoList = JSON.parseArray(new String(buffer), BeanInfo.class);
+        List<BeanInfo> beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType());
         beanInfoList.forEach(BeanFactory::addBeanByBeanDefinition);
 //        beanInfoList.forEach(beanDefinition -> System.out.println(beanDefinition.getConstructor()));
     }
@@ -61,7 +58,6 @@ public class BeanFactory {
                     Object[] args = new Object[constructorParamCount];
                     int pos = 0;
                     for (Parameter parameter : params) { //填充构造函数参数
-                        String name = parameter.getName();
                         Class type = parameter.getType();
                         String value = beanInfo.getConstructor().get(pos);
 
@@ -176,10 +172,4 @@ public class BeanFactory {
         return beanMap.containsKey(key);
     }
 
-    @Test
-    public void testRefPattern() {
-        Matcher matcher = BEAN_REF_PATTERN.matcher("${test}");
-        System.out.println(matcher.find());
-        System.out.println(matcher.group(1));
-    }
 }

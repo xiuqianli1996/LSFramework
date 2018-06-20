@@ -5,8 +5,8 @@
 
 #### 主要依赖包
 
-1. [fastjson](http://mvnrepository.com/artifact/com.alibaba/fastjson) 解析bean配置文件，实现通过配置文件初始化bean实例
-2. [cglib](http://mvnrepository.com/artifact/cglib/cglib) 使用动态代理实现AOP
+1. [gson](http://mvnrepository.com/artifact/com.google.code.gson/gson) 解析bean配置文件，实现通过配置文件初始化bean实例
+2. [cglib-nodep](http://mvnrepository.com/artifact/cglib/cglib-nodep) 使用动态代理实现AOP
 
 
 #### 程序说明

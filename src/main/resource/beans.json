@@ -21,8 +21,8 @@
     "constructor": [10, "${testBean}"],
     "properties": {
       "val1": 1,
-      "val2": "123",
-//      "testBean": "${testBean1}"
+      "val2": "123"
+//    , "testBean": "${testBean1}"
     }
   }
 ]
