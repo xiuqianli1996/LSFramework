@@ -7,10 +7,9 @@ import com.ls.framework.aop.Invocation;
 @LSBean
 public class Action2 extends AopAction {
     @Override
-    public Object invoke(Invocation invocation) {
+    public void invoke(Invocation invocation) throws Throwable {
         System.out.println("aop2 before");
-        Object o = invocation.invoke();
+        invocation.invoke();
         System.out.println("aop2 after");
-        return o;
     }
 }

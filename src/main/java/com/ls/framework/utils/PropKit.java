@@ -9,7 +9,7 @@ public class PropKit {
 
     public static void use(String fileName){
         InputStream inputStream = null;
-        inputStream = PropKit.class.getClassLoader().getResourceAsStream(fileName);
+        inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
         try {
             properties.load(inputStream);
         } catch (IOException e) {

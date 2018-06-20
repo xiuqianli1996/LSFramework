@@ -12,7 +12,7 @@ public class WebApplicationContext extends ApplicationContext {
     }
 
     private void initMapping() {
-        List<Class<?>> controllerClassList = ClassUtil.scanClassByAnnotation(LSController.class);
+        List<Class<?>> controllerClassList = ClassUtil.getClassesByAnnotation(LSController.class);
 
     }
 }

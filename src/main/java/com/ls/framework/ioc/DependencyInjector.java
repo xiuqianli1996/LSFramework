@@ -2,7 +2,7 @@ package com.ls.framework.ioc;
 
 import com.ls.framework.annotation.LSAutowired;
 import com.ls.framework.utils.StringKit;
-import com.ls.framework.aop.Enhancer;
+import com.ls.framework.aop.AopHelper;
 import com.ls.framework.exception.DiException;
 
 import java.lang.reflect.Field;
@@ -17,7 +17,7 @@ public class DependencyInjector {
             if (!field.isAnnotationPresent(LSAutowired.class)) {
                 continue;
             }
-            if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isFinal(field.getModifiers())) {
                 throw new DiException(clazz.getName() + ":" + field.getName());
             }
 
@@ -26,13 +26,13 @@ public class DependencyInjector {
             if (StringKit.isBlank(beanName)) {
                 beanName = field.getType().getName();
             }
-            Object val = BeanFactory.getInstance().getBean(beanName);
+            Object val = BeanFactory.getBean(beanName);
             if (val == null) {
                 throw new DiException(beanName + "is not found in bean container");
             }
             field.setAccessible(true);
             try {
-                field.set(obj, Enhancer.enhance(val)); //注入Aop强化后的对象
+                field.set(obj, AopHelper.enhance(val)); //注入Aop强化后的对象
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 throw new DiException(e.getMessage());

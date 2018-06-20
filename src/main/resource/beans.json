@@ -1,0 +1,28 @@
+[
+  {
+    "name": "testBean",
+    "className": "demo.controller.TestBean",
+    "properties": {
+      "val1": 10,
+      "val2": "123"
+    }
+  },
+  {
+    "name": "testBean1",
+    "className": "demo.controller.TestBean",
+    "properties": {
+      "val1": 110,
+      "val2": "1223213"
+    }
+  },
+  {
+    "name": "testBean2",
+    "className": "demo.controller.TestBean2",
+    "constructor": [10, "${testBean}"],
+    "properties": {
+      "val1": 1,
+      "val2": "123",
+//      "testBean": "${testBean1}"
+    }
+  }
+]
