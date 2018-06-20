@@ -28,7 +28,6 @@ public class Invocation {
         } else {
             returnVal = methodProxy.invoke(target, args);
         }
-
         return this;
     }
 

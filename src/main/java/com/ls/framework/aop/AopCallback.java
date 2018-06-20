@@ -2,7 +2,7 @@ package com.ls.framework.aop;
 
 import com.ls.framework.annotation.LSAround;
 import com.ls.framework.annotation.LSClear;
-import com.ls.framework.ioc.BeanFactory;
+import com.ls.framework.ioc.BeanContainer;
 import com.ls.framework.utils.CollectionKit;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -31,12 +31,12 @@ public class AopCallback implements MethodInterceptor {
     }
     
     private List<AopAction> getAopActionChain(Method method) {
-        List<AopAction> actionList = AopHelper.getAopActionChain(method);
+        List<AopAction> actionList = AopContainer.getAopActionChain(method);
     	if (actionList != null) {
     		return actionList;
     	}
 
-        actionList = AopHelper.getClassAopActionChain(target.getClass());//获取类拦截器
+        actionList = AopContainer.getClassAopActionChain(target.getClass());//获取类拦截器
     	
     	if (!method.isAnnotationPresent(LSAround.class)) {
     		return actionList;
@@ -58,10 +58,10 @@ public class AopCallback implements MethodInterceptor {
         }
     	LSAround lsAround = method.getAnnotation(LSAround.class);
         for (Class<? extends AopAction> aopActionClass : lsAround.value()) {
-            AopAction aopAction = BeanFactory.getBean(aopActionClass);
+            AopAction aopAction = BeanContainer.getBean(aopActionClass);
             actionList.add(aopAction);
         }
-        AopHelper.putAopActionChain(method, actionList);
+        AopContainer.putAopActionChain(method, actionList);
     	return actionList;
     }
 }

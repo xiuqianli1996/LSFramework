@@ -10,6 +10,13 @@ import java.lang.reflect.Modifier;
 
 public class DependencyInjector {
 
+    public static void injectAll() {
+        for (Object obj : BeanContainer.allBeans()) {
+            inject(obj);
+        }
+    }
+
+
     public static void inject(Object obj) {
         Class<?> clazz = obj.getClass();
         Field[] fields = clazz.getDeclaredFields();
@@ -26,7 +33,7 @@ public class DependencyInjector {
             if (StringKit.isBlank(beanName)) {
                 beanName = field.getType().getName();
             }
-            Object val = BeanFactory.getBean(beanName);
+            Object val = BeanContainer.getBean(beanName);
             if (val == null) {
                 throw new DiException(beanName + "is not found in bean container");
             }
