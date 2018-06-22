@@ -2,9 +2,9 @@ package com.ls.framework.core.annotation;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface LSBean {
-    String value() default "";
+public @interface LSParam {
+    String value();
 }

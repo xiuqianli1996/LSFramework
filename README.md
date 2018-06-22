@@ -1,7 +1,18 @@
 # LSFramework
 
 #### 项目介绍
-学习aop、ioc思想的demo，没看过spring的源码，因为实在是太庞大了，参考部分网上博客及开源代码完成。
+手写山寨版"spring"，学习aop、ioc思想的demo，没看过spring的源码，因为实在是太庞大了，参考部分网上博客及开源代码完成。
+
+
+#### 进度记录
+
+2018.06.22  继续抽离部分代码逻辑，新增Loader接口，为新增其他组件做准备，新增LSConfiguration注解，实现从注解的类中加载bean实例，AOP、IOC基本完善。
+
+
+#### TODO
+
+1. web模块
+2. cache模块
 
 #### 主要依赖包
 
@@ -41,8 +52,21 @@ public class Service {
     }
 }
 ```
-初始化时会扫描@LSBean注解修饰的类实例化到bean容器中，必须有无参构造函数，目前类成员变量只支持@LSAutowired注解注入。
+初始化时会扫描@LSBean注解修饰的类实例化到bean容器中，必须有无参构造函数，目前需要依赖注入的类成员变量只支持@LSAutowired注解注入。
 因为是先全部实例化后进行依赖注入，所以不会有循环依赖
+
+@LSConfiguration注解，会扫描LSConfiguration注解的类里的所有@LSBean注解修饰的方法，将返回值注入bean容器，方法参数是需要注入的参数, @LSParam标注注入的beanName
+
+```java
+@LSConfiguration
+public class TestConfig {
+
+    @LSBean
+    public TestConfigDI getTestConfigDI(@LSParam("service3") IService service2, Service3 service3) {
+        return new TestConfigDI(service2, service3); 
+    }
+}
+```
 
 配置文件方式
 ```
@@ -98,3 +122,5 @@ public class Action3 extends AopAction {
 1.[JFinal](https://gitee.com/jfinal/jfinal)
 
 2.[smart-framework](https://gitee.com/huangyong/smart-framework)
+
+3.[coody-icop](https://gitee.com/coodyer/coody-icop)

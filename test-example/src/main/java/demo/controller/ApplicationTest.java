@@ -9,8 +9,10 @@ public class ApplicationTest {
 
     public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         ApplicationContext applicationContext = new ApplicationContext("application.properties");
-//        OneController oneController = applicationContext.getBean(OneController.class);
+        OneController oneController = applicationContext.getBean(OneController.class);
 //        oneController.test();
+        TestConfigDI testConfigDI = applicationContext.getBean(TestConfigDI.class);
+        testConfigDI.test();
         TestBean2 testBean = applicationContext.getBean(TestBean2.class);
 //        System.out.println(testBean);
         testBean.test();

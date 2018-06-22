@@ -18,30 +18,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JsonBeanFactory implements BeanFactory {
+public class JsonBeanFactory extends BaseBeanFactory {
 
     private List<BeanInfo> beanInfoList = null;
     private final static Pattern BEAN_REF_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}");
 
-    public JsonBeanFactory(String configPath) {
-        InputStream inputStream = ClassUtil.getClassLoader().getResourceAsStream(configPath);
-        byte[] buffer = new byte[0];
-        try {
-            buffer = new byte[inputStream.available()];
-            inputStream.read(buffer);
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (buffer.length > 0) {
-            beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType());
-        }
-
-    }
-
     @Override
-    public void loadBean() {
-        if (CollectionKit.isEmptyList(beanInfoList))
+    public void loadBean(String configPath) {
+        initBeanInfoList(configPath);
+        if (CollectionKit.isEmptyCollection(beanInfoList))
             return;
         beanInfoList.forEach(this::addBeanByBeanInfo);
     }
@@ -61,6 +46,22 @@ public class JsonBeanFactory implements BeanFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void initBeanInfoList(String configPath) {
+        InputStream inputStream = ClassUtil.getClassLoader().getResourceAsStream(configPath);
+        byte[] buffer = new byte[0];
+        try {
+            buffer = new byte[inputStream.available()];
+            inputStream.read(buffer);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (buffer.length > 0) {
+            beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType());
+        }
+
     }
 
     private Object injectProperty(BeanInfo beanInfo, Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException {

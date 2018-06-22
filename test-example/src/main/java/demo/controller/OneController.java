@@ -2,12 +2,11 @@ package demo.controller;
 
 import com.ls.framework.core.annotation.LSAround;
 import com.ls.framework.core.annotation.LSAutowired;
+import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.annotation.LSClear;
-import com.ls.framework.core.annotation.LSController;
 import com.ls.framework.web.annotation.LSRequestMapping;
 import demo.controller.service.Service;
 
-@LSController
 @LSRequestMapping("/one")
 @LSAround({Action.class, Action3.class})
 public class OneController {

@@ -22,6 +22,6 @@ public class Service {
     }
 
     public void test2() {
-        service3.test3();
+        service3.test();
     }
 }

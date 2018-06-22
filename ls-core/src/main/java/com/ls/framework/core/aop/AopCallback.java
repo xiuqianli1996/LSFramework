@@ -22,9 +22,8 @@ public class AopCallback implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-
         List<AopAction> actionList = getAopActionChain(method);
-    	if (CollectionKit.isEmptyList(actionList)) {
+    	if (CollectionKit.isEmptyCollection(actionList)) {
             return methodProxy.invoke(target, args);
         }
         return new Invocation(target, method, args, methodProxy, actionList).invoke().getReturnVal();
