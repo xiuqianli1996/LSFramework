@@ -5,17 +5,23 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
+  <listener>
+    <listener-class>com.ls.framework.web.LSContextListner</listener-class>
+  </listener>
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>application.properties</param-value>
+  </context-param>
+
   <servlet>
     <servlet-name>LSServlet</servlet-name>
-    <servlet-class>com.ls.framework.core.web.LSDispatchServlet</servlet-class>
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>application.properties</param-value>
-    </init-param>
+    <servlet-class>com.ls.framework.web.LSDispatchServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>LSServlet</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
+
 </web-app>

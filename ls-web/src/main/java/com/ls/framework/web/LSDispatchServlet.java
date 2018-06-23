@@ -2,6 +2,9 @@ package com.ls.framework.web;
 
 
 import com.ls.framework.core.annotation.LSBean;
+import com.ls.framework.core.context.ApplicationContext;
+import com.ls.framework.web.handler.ActionHandler;
+import com.ls.framework.web.handler.HandlerContainer;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,15 +16,12 @@ import java.io.IOException;
 public class LSDispatchServlet extends HttpServlet {
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        System.out.println("--- LSDispatchServlet init ---");
-        String configLocation = config.getInitParameter("contextConfigLocation");
-
-
-    }
-
-    @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.service(req, resp);
+        String formatUrl = req.getRequestURI().replaceAll("/+", "/");
+        ActionHandler actionHandler = HandlerContainer.get(formatUrl);
+        System.out.println(req.getRequestURI());
+        if (actionHandler != null) {
+            actionHandler.invoke(formatUrl, req, resp);
+        }
     }
 }

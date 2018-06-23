@@ -10,13 +10,11 @@
   <modules>
     <module>ls-core</module>
     <module>ls-web</module>
-      <module>test-example</module>
+    <module>test-example</module>
   </modules>
   <packaging>pom</packaging>
 
-  <name>framework Maven Webapp</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <name>LSFramework</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,7 +49,7 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <version>4.0.1</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -92,6 +90,7 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
     <!--<plugins>-->
       <!--<plugin>-->

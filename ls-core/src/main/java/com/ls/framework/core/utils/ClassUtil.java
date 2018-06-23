@@ -14,26 +14,26 @@ public class ClassUtil {
         return Thread.currentThread().getContextClassLoader();
     }
 
-    public static Set<Class<?>> getClassesByAnnotation(Set<Class<?>> classSetClass, Class<? extends Annotation> annotationClass) {
-        return classSetClass.stream()
+    public static Set<Class<?>> getClassesByAnnotation(Set<Class<?>> classSet, Class<? extends Annotation> annotationClass) {
+        return classSet.stream()
                 .filter(clazz -> clazz.isAnnotationPresent(annotationClass))
                 .collect(Collectors.toSet());
     }
 
-    public static Set<Class<?>> getClassesBySuper(Set<Class<?>> classSetClass, Class<?> superClass) {
-        return classSetClass.stream()
+    public static Set<Class<?>> getClassesBySuper(Set<Class<?>> classSet, Class<?> superClass) {
+        return classSet.stream()
                 .filter(superClass::isAssignableFrom)
                 .collect(Collectors.toSet());
     }
 
-    public static Set<Class<?>> getClassesByPkg(Set<Class<?>> classSetClass, String pkg) {
-        return classSetClass.stream()
+    public static Set<Class<?>> getClassesByPkg(Set<Class<?>> classSet, String pkg) {
+        return classSet.stream()
                 .filter(clazz -> clazz.getName().startsWith(pkg))
                 .collect(Collectors.toSet());
     }
 
-    public static Set<Class<?>> getClassesByInterface(Set<Class<?>> classSetClass, Class<?> interfaceClass) {
-        return classSetClass.stream()
+    public static Set<Class<?>> getClassesByInterface(Set<Class<?>> classSet, Class<?> interfaceClass) {
+        return classSet.stream()
                 .filter(clazz -> CollectionKit.inArray(clazz.getInterfaces(), interfaceClass))
                 .collect(Collectors.toSet());
     }

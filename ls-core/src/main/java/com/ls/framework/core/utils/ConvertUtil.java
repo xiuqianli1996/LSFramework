@@ -1,5 +1,7 @@
 package com.ls.framework.core.utils;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +11,8 @@ public class ConvertUtil {
     private static final String dateTimePattern = "yyyy-MM-dd HH:mm:ss";
 
     public static Object convert(String s, Class typeClass){
+        if (typeClass == String.class)
+            return s;
         if (typeClass == Integer.class || typeClass == int.class){
             return Integer.parseInt(s);
         } else if (typeClass == Long.class || typeClass == long.class){
@@ -19,6 +23,10 @@ public class ConvertUtil {
             return Float.parseFloat(s);
         } else if (typeClass == Double.class || typeClass == double.class){
             return Double.parseDouble(s);
+        }  else if (typeClass == BigDecimal.class){
+            return new BigDecimal(s);
+        }  else if (typeClass == BigInteger.class){
+            return new BigInteger(s);
         } else if (typeClass == Date.class){
             SimpleDateFormat simpleDateFormat = null;
             s = s.trim();
@@ -36,6 +44,6 @@ public class ConvertUtil {
 
             return null;
         }
-        return s;
+        return null;
     }
 }

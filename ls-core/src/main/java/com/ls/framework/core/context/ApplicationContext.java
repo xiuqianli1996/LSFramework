@@ -4,6 +4,7 @@ import com.ls.framework.core.aop.AopHelper;
 import com.ls.framework.core.aop.AopLoader;
 import com.ls.framework.core.exception.LSException;
 import com.ls.framework.core.ioc.BeanContainer;
+import com.ls.framework.core.ioc.BeanHelper;
 import com.ls.framework.core.ioc.DependencyInjector;
 import com.ls.framework.core.ioc.IocLoader;
 import com.ls.framework.core.ioc.factory.AnnotationBeanFactory;
@@ -16,6 +17,7 @@ import com.ls.framework.core.utils.PropKit;
 import com.ls.framework.core.utils.StringKit;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class ApplicationContext {
@@ -25,10 +27,11 @@ public class ApplicationContext {
     public ApplicationContext(String configLocation) {
         //加载配置文件
         PropKit.use(configLocation);
+    }
 
+    public void init() {
 
         Set<Class<?>> classSet = initClassSet();
-
         initLoader(classSet);
 
     }
@@ -52,15 +55,10 @@ public class ApplicationContext {
     private void initLoader(Set<Class<?>> classSet) {
         ClassUtil.getClassesByInterface(classSet, Loader.class)
                 .stream()
-                .map(clazz -> {
-                    try {
-                        return (Loader) clazz.newInstance();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                })
+                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+                .map(BeanHelper::getInstance)
                 .filter(Objects::nonNull) //过滤掉创建实例失败的Loader
+                .map(o -> (Loader) o)
                 .sorted(Comparator.comparingInt(Loader::getLevel)) //对所有loader根据level升序排序
                 .forEach(loader -> {
                     Logger log = Logger.getLogger(loader.getClass());

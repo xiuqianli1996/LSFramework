@@ -3,6 +3,7 @@ package com.ls.framework.core.ioc.factory;
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.annotation.LSConfiguration;
 import com.ls.framework.core.ioc.BeanContainer;
+import com.ls.framework.core.ioc.BeanHelper;
 import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.core.utils.CollectionKit;
 import com.ls.framework.core.utils.StringKit;
@@ -22,19 +23,11 @@ public class AnnotationBeanFactory extends BaseBeanFactory {
         //加载LSBean注解的类
         ClassUtil.getClassesByAnnotation(classSet, LSBean.class)
                 .forEach(clazz -> {
-                    Object instance = getInstance(clazz);
+                    Object instance = BeanHelper.getInstance(clazz);
                     LSBean lsBean = clazz.getAnnotation(LSBean.class);
                     BeanContainer.putBeanByAnnotation(clazz, lsBean, instance);
                 });
 
     }
 
-    private Object getInstance(Class<?> clazz) {
-        try {
-            return clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
