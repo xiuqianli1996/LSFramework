@@ -1,20 +1,9 @@
 package com.ls.framework.core.context;
 
-import com.ls.framework.core.aop.AopHelper;
-import com.ls.framework.core.aop.AopLoader;
-import com.ls.framework.core.exception.LSException;
+import com.ls.framework.core.annotation.LSLoader;
 import com.ls.framework.core.ioc.BeanContainer;
-import com.ls.framework.core.ioc.BeanHelper;
-import com.ls.framework.core.ioc.DependencyInjector;
-import com.ls.framework.core.ioc.IocLoader;
-import com.ls.framework.core.ioc.factory.AnnotationBeanFactory;
-import com.ls.framework.core.ioc.factory.BeanFactory;
-import com.ls.framework.core.ioc.factory.JsonBeanFactory;
 import com.ls.framework.core.loader.Loader;
-import com.ls.framework.core.utils.ClassUtil;
-import com.ls.framework.core.utils.CollectionKit;
-import com.ls.framework.core.utils.PropKit;
-import com.ls.framework.core.utils.StringKit;
+import com.ls.framework.core.utils.*;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Modifier;
@@ -55,11 +44,16 @@ public class ApplicationContext {
     private void initLoader(Set<Class<?>> classSet) {
         ClassUtil.getClassesByInterface(classSet, Loader.class)
                 .stream()
-                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-                .map(BeanHelper::getInstance)
+                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers())) //排除抽象类
+                .filter(clazz -> clazz.isAnnotationPresent(LSLoader.class)) //只加载LSLoader注解的类
+                .sorted((clazz1, clazz2) -> {
+                    LSLoader lsLoader1 = clazz1.getAnnotation(LSLoader.class);
+                    LSLoader lsLoader2 = clazz2.getAnnotation(LSLoader.class);
+                    return lsLoader1.value() - lsLoader2.value();
+                }) //对所有loader根据level升序排序
+                .map(ObjectKit::getInstance)
                 .filter(Objects::nonNull) //过滤掉创建实例失败的Loader
                 .map(o -> (Loader) o)
-                .sorted(Comparator.comparingInt(Loader::getLevel)) //对所有loader根据level升序排序
                 .forEach(loader -> {
                     Logger log = Logger.getLogger(loader.getClass());
                     log.info("loading...");

@@ -5,6 +5,7 @@ import com.ls.framework.web.resolver.argument.ParameterResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,11 +19,11 @@ public class ParameterResolverContainer {
         parameterResolverList.add(parameterResolver);
     }
 
-    public static Object handle(Parameter parameter, HttpServletRequest request, HttpServletResponse response, Map<String, String> pathParamMap) {
+    public static Object handle(Method actionMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response, Map<String, String> pathParamMap) {
 
         for (ParameterResolver parameterResolver : parameterResolverList) {
-            if (parameterResolver.filter(parameter, request, response, pathParamMap)) {
-                return parameterResolver.handle(parameter, request, response, pathParamMap);
+            if (parameterResolver.filter(actionMethod, parameter, request, response, pathParamMap)) {
+                return parameterResolver.handle(actionMethod, parameter, request, response, pathParamMap);
             }
         }
 

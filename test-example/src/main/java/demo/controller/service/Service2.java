@@ -8,8 +8,9 @@ import com.ls.framework.core.annotation.LSBean;
 public class Service2 implements IService {
     @LSAutowired
     Service service;
-    public void test() {
+    public String test() {
         System.out.println("IOC test success");
+        return "";
     }
 
     public void test2() {

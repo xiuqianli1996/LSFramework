@@ -2,29 +2,32 @@ package com.ls.framework.core.ioc.factory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.ls.framework.core.exception.LSException;
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.ioc.BeanInfo;
 import com.ls.framework.core.exception.DiException;
-import com.ls.framework.core.utils.ClassUtil;
-import com.ls.framework.core.utils.CollectionKit;
-import com.ls.framework.core.utils.ConvertUtil;
-import com.ls.framework.core.utils.StringKit;
+import com.ls.framework.core.utils.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JsonBeanFactory extends BaseBeanFactory {
+public class JsonBeanFactory implements BeanFactory {
 
     private List<BeanInfo> beanInfoList = null;
     private final static Pattern BEAN_REF_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}");
 
     @Override
-    public void loadBean(String configPath) {
+    public void loadBean(Set<Class<?>> classSet) {
+        String configPath = PropKit.get("app.beansConfig");
+        if (StringKit.isBlank(configPath)) {
+            throw new LSException("beansConfig path is null, can not load bean");
+        }
         initBeanInfoList(configPath);
         if (CollectionKit.isEmptyCollection(beanInfoList))
             return;
@@ -137,4 +140,5 @@ public class JsonBeanFactory extends BaseBeanFactory {
             return ConvertUtil.convert(value, type);
         }
     }
+
 }

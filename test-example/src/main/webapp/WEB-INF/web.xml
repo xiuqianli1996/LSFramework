@@ -1,18 +1,16 @@
-<!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
-
-<web-app>
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.0"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee   http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
   <display-name>Archetype Created Web Application</display-name>
-
-  <listener>
-    <listener-class>com.ls.framework.web.LSContextListner</listener-class>
-  </listener>
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>application.properties</param-value>
   </context-param>
+
+  <listener>
+    <listener-class>com.ls.framework.web.LSContextListener</listener-class>
+  </listener>
 
   <servlet>
     <servlet-name>LSServlet</servlet-name>
@@ -21,7 +19,7 @@
 
   <servlet-mapping>
     <servlet-name>LSServlet</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
 
 </web-app>

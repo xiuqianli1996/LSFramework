@@ -6,15 +6,18 @@
 
 #### 进度记录
 
-2018.06.23 继续完善，主要是完成了拥有基础功能的web模块，注解式路由、request参数和path参数绑定
+2018.06.26 完成了拥有基础功能的web模块，注解式路由、request参数和path参数绑定、jsp视图、json视图、全局异常处理，详见test-example/OneController（事实证明基础还是很弱，基础骨架半天完成，填坑倒是花了一天多）
 
 2018.06.22  继续抽离部分代码逻辑，新增Loader接口，为新增其他组件做准备，新增LSConfiguration注解，实现从注解的类中加载bean实例，AOP、IOC基本完善。
 
 
 #### TODO
 
-1. web模块
-2. cache模块
+1. cache模块
+
+2.jdbc模块
+
+3.扫描jar包class
 
 #### 主要依赖包
 

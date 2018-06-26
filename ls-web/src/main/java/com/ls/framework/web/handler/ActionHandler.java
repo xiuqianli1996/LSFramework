@@ -1,10 +1,12 @@
 package com.ls.framework.web.handler;
 
+import com.ls.framework.web.exception.MissingRequestParamException;
 import com.ls.framework.web.resolver.ParameterResolverContainer;
 import com.ls.framework.web.resolver.ViewResolversContainer;
 import com.ls.framework.web.utils.PathParamKit;
 import org.apache.log4j.Logger;
 
+import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,35 +27,38 @@ public class ActionHandler {
     private Method actionMethod;
     private Pattern actionPattern;
     private String mappingUrl;
+    private String regxUrl;
     private List<String> pathParamNames;
 
-    public void invoke(String url, HttpServletRequest request, HttpServletResponse response) {
+    public Object invoke(String url, HttpServletRequest request, HttpServletResponse response) throws Exception {
         logger.info(request.getMethod() + " === " + request.getRequestURL());
         Map<String, String> pathParamMap = PathParamKit.buildPathParam(url, actionPattern, pathParamNames);
         Object[] args = new Object[actionMethod.getParameterCount()];
         int pos = 0;
         for (Parameter parameter : actionMethod.getParameters()) {
-            args[pos++] = ParameterResolverContainer.handle(parameter, request, response, pathParamMap);
+            args[pos++] = ParameterResolverContainer.handle(actionMethod, parameter, request, response, pathParamMap);
         }
         try {
-            Object result = actionMethod.invoke(controllerInstance, args);
-            if (result !=null) {
-                ViewResolversContainer.handle(this, result, request, response);
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            try {
-                e.printStackTrace(response.getWriter());
-                response.getWriter().flush();
-                response.getWriter().close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
+            return actionMethod.invoke(controllerInstance, args);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            throw (Exception) e.getTargetException();
         }
+        return null;
     }
 
     public boolean match(String url) {
         return actionPattern.matcher(url).matches();
+    }
+
+    public String getRegxUrl() {
+        return regxUrl;
+    }
+
+    public void setRegxUrl(String regxUrl) {
+        this.actionPattern = Pattern.compile(regxUrl);
+        this.regxUrl = regxUrl;
     }
 
     public Class getControllerClass() {
@@ -104,21 +109,28 @@ public class ActionHandler {
         this.actionMethod = actionMethod;
     }
 
+    /**
+     * 替换掉对比对象的path参数占位符后尝试通过当前对象的正则表达式匹配，成功即认为映射路径重复
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ActionHandler that = (ActionHandler) o;
-        return Objects.equals(controllerInstance, that.controllerInstance) &&
-                Objects.equals(controllerClass, that.controllerClass) &&
-                Objects.equals(actionMethod, that.actionMethod) &&
-                Objects.equals(actionPattern, that.actionPattern) &&
-                Objects.equals(mappingUrl, that.mappingUrl) &&
-                Objects.equals(pathParamNames, that.pathParamNames);
+        return actionPattern.matcher(that.mappingUrl.replaceAll("\\{\\w+\\}", "a")).matches();
+//        return Objects.equals(controllerInstance, that.controllerInstance) &&
+//                Objects.equals(controllerClass, that.controllerClass) &&
+//                Objects.equals(actionMethod, that.actionMethod) &&
+//                Objects.equals(actionPattern, that.actionPattern) &&
+//                Objects.equals(mappingUrl, that.mappingUrl) &&
+//                Objects.equals(pathParamNames, that.pathParamNames);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(controllerInstance, controllerClass, actionMethod, actionPattern, mappingUrl, pathParamNames);
     }
+
 }

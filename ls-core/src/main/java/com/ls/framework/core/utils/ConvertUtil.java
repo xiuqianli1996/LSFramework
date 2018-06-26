@@ -13,6 +13,9 @@ public class ConvertUtil {
     public static Object convert(String s, Class typeClass){
         if (typeClass == String.class)
             return s;
+        if (StringKit.isBlank(s)) {
+            return null;
+        }
         if (typeClass == Integer.class || typeClass == int.class){
             return Integer.parseInt(s);
         } else if (typeClass == Long.class || typeClass == long.class){
@@ -41,8 +44,6 @@ public class ConvertUtil {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
-            return null;
         }
         return null;
     }

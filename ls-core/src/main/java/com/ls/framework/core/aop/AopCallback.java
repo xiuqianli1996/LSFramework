@@ -20,6 +20,10 @@ public class AopCallback implements MethodInterceptor {
         this.target = target;
     }
 
+    public Object getTarget() {
+        return target;
+    }
+
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         List<AopAction> actionList = getAopActionChain(method);

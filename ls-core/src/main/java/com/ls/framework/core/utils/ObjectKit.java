@@ -12,4 +12,13 @@ public class ObjectKit {
     public static boolean notNull(Object obj) {
         return obj != null;
     }
+
+    public static Object getInstance(Class<?> clazz) {
+        try {
+            return clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

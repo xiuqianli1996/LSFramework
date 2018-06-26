@@ -10,7 +10,8 @@ public class Service3 implements IService {
 
     @LSAround(Action.class)
     @Override
-    public void test() {
+    public String test() {
         System.out.println("IOC2 test success");
+        return "";
     }
 }

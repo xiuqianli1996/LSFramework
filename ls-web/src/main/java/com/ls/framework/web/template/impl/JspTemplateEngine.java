@@ -36,6 +36,6 @@ public class JspTemplateEngine implements TemplateEngine {
 
     private String getViewPath(String path) {
         String fullPath = "/" + viewPrefix + "/" + path + viewSuffix;
-        return fullPath.replace("/+", "/");
+        return fullPath.replaceAll("/+", "/");
     }
 }

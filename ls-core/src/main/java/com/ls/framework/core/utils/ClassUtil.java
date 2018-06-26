@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -89,14 +90,19 @@ public class ClassUtil {
 				try {
 					clazz = Class.forName(className);
                     classSet.add(clazz);
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
+				} catch (Exception e) {
 					e.printStackTrace();
 					throw new RuntimeException("Can not load class:" + className);
-				}
+				} catch (NoClassDefFoundError e) {
+
+                }
                 
             }
         }
+    }
+
+    public static String getFullMethodName(Method method) {
+        return String.format("%s.%s", method.getDeclaringClass().getName(), method.getName());
     }
 
 }

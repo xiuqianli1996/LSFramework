@@ -3,6 +3,7 @@ package com.ls.framework.core.aop;
 import com.ls.framework.core.annotation.LSAround;
 import com.ls.framework.core.annotation.LSAspect;
 import com.ls.framework.core.annotation.LSBean;
+import com.ls.framework.core.annotation.LSLoader;
 import com.ls.framework.core.constant.Constants;
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.loader.Loader;
@@ -12,6 +13,7 @@ import com.ls.framework.core.utils.StringKit;
 import java.util.Map;
 import java.util.Set;
 
+@LSLoader(100)
 public class AopLoader implements Loader {
     @Override
     public void doLoad(Set<Class<?>> classSet) {
@@ -19,11 +21,6 @@ public class AopLoader implements Loader {
         createChainsByAopAction(classSet);
         createChainsByAnnotation(classSet);
         enhanceBeanContainer();
-    }
-
-    @Override
-    public int getLevel() {
-        return Constants.AOP_LOADER_LEVEL;
     }
 
     private void enhanceBeanContainer() {

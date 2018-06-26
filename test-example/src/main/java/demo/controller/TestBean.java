@@ -3,7 +3,7 @@ package demo.controller;
 public class TestBean {
 
     private int val1;
-    private static String val2;
+    private  String val2;
 
     public int getVal1() {
         return val1;

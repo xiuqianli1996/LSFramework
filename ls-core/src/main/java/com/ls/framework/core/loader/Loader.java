@@ -5,6 +5,5 @@ import java.util.Set;
 public interface Loader {
 
     void doLoad(Set<Class<?>> classSet);
-    int getLevel();
 
 }

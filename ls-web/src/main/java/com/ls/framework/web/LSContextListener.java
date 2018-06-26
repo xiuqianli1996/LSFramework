@@ -9,7 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 
-public class LSContextListner implements ServletContextListener {
+public class LSContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -25,6 +25,7 @@ public class LSContextListner implements ServletContextListener {
     private void registerDefaultServlet(ServletContext context) {
         ServletRegistration defaultServlet = context.getServletRegistration("default");
         defaultServlet.addMapping(PropKit.get("app.favicon", "/favicon.ico"));
+//        defaultServlet.addMapping("/WEB-INF/*");
         String wwwPath = PropKit.get("app.resources", "/static/");
         if (StringKit.notBlank(wwwPath)) {
             defaultServlet.addMapping(wwwPath + "*");

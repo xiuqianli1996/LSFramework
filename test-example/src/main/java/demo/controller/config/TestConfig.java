@@ -1,5 +1,6 @@
 package demo.controller.config;
 
+import com.ls.framework.core.annotation.LSAutowired;
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.annotation.LSConfiguration;
 import com.ls.framework.core.annotation.LSParam;
@@ -13,7 +14,7 @@ import demo.controller.service.Service3;
 public class TestConfig {
 
     @LSBean
-    public TestConfigDI getTestConfigDI(@LSParam("service3") IService service2, Service3 service3) {
+    public TestConfigDI getTestConfigDI(@LSAutowired("service3") IService service2, Service3 service3) {
         return new TestConfigDI(service2, service3);
     }
 }
