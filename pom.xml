@@ -10,7 +10,8 @@
   <modules>
     <module>ls-core</module>
     <module>ls-web</module>
-    <module>test-example</module>
+    <module>ls-jdbc</module>
+
   </modules>
   <packaging>pom</packaging>
 

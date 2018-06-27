@@ -1,6 +1,7 @@
 package com.ls.framework.web;
 
 import com.ls.framework.core.context.ApplicationContext;
+import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.core.utils.PropKit;
 import com.ls.framework.core.utils.StringKit;
 
@@ -20,6 +21,7 @@ public class LSContextListener implements ServletContextListener {
         applicationContext.init();
 
         registerDefaultServlet(servletContext);
+
     }
 
     private void registerDefaultServlet(ServletContext context) {

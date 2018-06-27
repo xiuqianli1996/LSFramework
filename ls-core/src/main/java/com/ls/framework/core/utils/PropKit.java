@@ -2,6 +2,7 @@ package com.ls.framework.core.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Properties;
 
 public class PropKit {
@@ -30,5 +31,9 @@ public class PropKit {
 
     public static String get(String key, String defaultValue){
         return properties.getProperty(key, defaultValue);
+    }
+
+    public static Enumeration<?> propertyNames() {
+        return properties.propertyNames();
     }
 }

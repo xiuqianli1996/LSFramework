@@ -8,6 +8,7 @@ import com.ls.framework.core.constant.Constants;
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.loader.Loader;
 import com.ls.framework.core.utils.ClassUtil;
+import com.ls.framework.core.utils.CollectionKit;
 import com.ls.framework.core.utils.StringKit;
 
 import java.util.Map;
@@ -29,8 +30,13 @@ public class AopLoader implements Loader {
         for (Map.Entry<String, Object> entry : beanMap.entrySet()) {
             Object obj = entry.getValue();
             // || !obj.getClass().isAnnotationPresent(LSBean.class)
-            if (obj.getClass().isAssignableFrom(AopAction.class)) {
+            Class<?> clazz = obj.getClass();
+            if (clazz.isAssignableFrom(AopAction.class)) {
                 continue; //不强化Aop拦截类
+            }
+            if (!clazz.isAnnotationPresent(LSBean.class)
+                    && CollectionKit.isEmptyCollection(AopContainer.getClassAopActionChain(clazz))) {
+                continue;//不是LSBean注解的类，且切面列表为空的类不加强
             }
             Object enhanceInstance = AopHelper.enhance(obj);
             beanMap.put(entry.getKey(), enhanceInstance);

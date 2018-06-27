@@ -1,7 +1,6 @@
 package com.ls.framework.web.resolver;
 
-import com.ls.framework.web.handler.ActionHandler;
-import com.ls.framework.web.resolver.argument.ParameterResolver;
+import com.ls.framework.web.resolver.parameter.ParameterResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

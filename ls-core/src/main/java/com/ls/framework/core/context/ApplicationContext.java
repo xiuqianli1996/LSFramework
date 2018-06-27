@@ -1,6 +1,7 @@
 package com.ls.framework.core.context;
 
 import com.ls.framework.core.annotation.LSLoader;
+import com.ls.framework.core.constant.Constants;
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.loader.Loader;
 import com.ls.framework.core.utils.*;
@@ -26,7 +27,7 @@ public class ApplicationContext {
     }
 
     private Set<Class<?>> initClassSet() {
-        String scanPackage = PropKit.get("app.scanPackage");
+        String scanPackage = PropKit.get(Constants.CONFIG_SCAN_PACKAGE);
         if (StringKit.isBlank(scanPackage)) {
             throw new RuntimeException("scan package can not be null");
         }

@@ -6,6 +6,8 @@
 
 #### 进度记录
 
+2018.06.27 完成jdbc模块，支持查询实体、数组、List集合，单元测试基本完成，但是在测试模块里怎么都引入不了，暂时放下
+
 2018.06.26 完成了拥有基础功能的web模块，注解式路由、request参数和path参数绑定、jsp视图、json视图、全局异常处理，详见test-example/OneController（事实证明基础还是很弱，基础骨架半天完成，填坑倒是花了一天多）
 
 2018.06.22  继续抽离部分代码逻辑，新增Loader接口，为新增其他组件做准备，新增LSConfiguration注解，实现从注解的类中加载bean实例，AOP、IOC基本完善。
@@ -15,9 +17,7 @@
 
 1. cache模块
 
-2.jdbc模块
-
-3.扫描jar包class
+2.扫描jar包class
 
 #### 主要依赖包
 
@@ -29,7 +29,7 @@
 
 1.配置文件
 ```
-app.scanPackage=demo.controller #需要扫描的包，递归扫描，通常只需要一个，多个包名使用逗号分隔
+app.scanPackage=demo.web #需要扫描的包，递归扫描，通常只需要一个，多个包名使用逗号分隔
 app.beansConfig=beans.json #初始化bean的配置文件
 ```
 
@@ -79,7 +79,7 @@ public class TestConfig {
 [
   {
     "name": "testBean2", //在bean容器中的名字
-    "className": "demo.controller.TestBean2", //类名
+    "className": "demo.web.TestBean2", //类名
     "constructor": [10, "${testBean}"], //构造函数的参数，个数和顺序必须一一对应
     "properties": { //成员变量，键值对结构
       "val1": 1,
@@ -96,7 +96,7 @@ public class TestConfig {
 
 ```java
 @LSBean
-@LSAspect(value = "demo.controller", cls = "TestBean2")
+@LSAspect(value = wdemo.webBean2")
 public class Action3 extends AopAction {
     @Override
     public void invoke(Invocation invocation) throws Throwable {
@@ -121,6 +121,10 @@ public class Action3 extends AopAction {
 优先级为@LSAspect > 类级@LSAround > 方法级@LSAround
 
 @LSClear注解作用于方法上，用于清除作用于的类上的指定切面（传入需要清除的类数组）或清空切面（不传参数）
+
+4.JDBC
+
+具体可查看单元测试
 
 #### 感谢
 

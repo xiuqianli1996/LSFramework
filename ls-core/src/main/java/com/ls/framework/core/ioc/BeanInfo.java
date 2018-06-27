@@ -7,7 +7,7 @@ public class BeanInfo {
 
 
     /**
-     * className : demo.controller.TestBean
+     * className : demo.web.TestBean
      * properties : {"val1":10,"val2":"123"}
      * constructor : {"val1":10,"val2":"123"}
      */

@@ -29,16 +29,21 @@ public class DependencyInjector {
             if (!field.isAnnotationPresent(LSAutowired.class)) {
                 continue;
             }
+
             if (Modifier.isFinal(field.getModifiers())) {
                 throw new DiException(clazz.getName() + ":" + field.getName());
             }
 
-            LSAutowired lsAutowired = field.getAnnotation(LSAutowired.class);
-            Object val = getInjectVal(lsAutowired, field.getType().getName());
 
-            field.setAccessible(true);
             try {
-                field.set(obj, AopHelper.enhance(val)); //注入Aop强化后的对象
+                field.setAccessible(true);
+//                if (field.get(obj) != null) {
+//                    continue;//已经有值不覆盖注入
+//                }
+
+                LSAutowired lsAutowired = field.getAnnotation(LSAutowired.class);
+                Object val = getInjectVal(lsAutowired, field.getType().getName());
+                field.set(obj, val); //注入Aop强化后的对象
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
                 throw new DiException(e.getMessage());
@@ -81,8 +86,9 @@ public class DependencyInjector {
         }
         Object val = BeanContainer.getBean(beanName);
         if (val == null) {
-            throw new DiException(beanName + "is not found in bean container");
+//            throw new DiException(beanName + "is not found in bean container");
+            return null;
         }
-        return val;
+        return AopHelper.enhance(val);
     }
 }

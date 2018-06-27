@@ -2,6 +2,7 @@ package com.ls.framework.core.ioc.factory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.ls.framework.core.constant.Constants;
 import com.ls.framework.core.exception.LSException;
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.ioc.BeanInfo;
@@ -24,7 +25,7 @@ public class JsonBeanFactory implements BeanFactory {
 
     @Override
     public void loadBean(Set<Class<?>> classSet) {
-        String configPath = PropKit.get("app.beansConfig");
+        String configPath = PropKit.get(Constants.CONFIG_BEANS_CONFIG);
         if (StringKit.isBlank(configPath)) {
             throw new LSException("beansConfig path is null, can not load bean");
         }

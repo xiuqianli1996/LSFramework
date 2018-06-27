@@ -2,29 +2,21 @@ package com.ls.framework.web.loader;
 
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.annotation.LSLoader;
-import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.loader.Loader;
 import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.core.utils.ObjectKit;
 import com.ls.framework.web.annotation.LSRequestMapping;
-import com.ls.framework.web.handler.ActionHandler;
-import com.ls.framework.web.handler.HandlerContainer;
 import com.ls.framework.web.handler.HandlerHelper;
 import com.ls.framework.web.resolver.ExceptionResolverContainer;
 import com.ls.framework.web.resolver.ParameterResolverContainer;
 import com.ls.framework.web.resolver.ViewResolversContainer;
-import com.ls.framework.web.resolver.argument.ParameterResolver;
+import com.ls.framework.web.resolver.parameter.ParameterResolver;
 import com.ls.framework.web.resolver.exception.ExceptionResolver;
 import com.ls.framework.web.resolver.view.ViewResolver;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @LSLoader(1000)
 public class WebLoader implements Loader {
