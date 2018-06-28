@@ -11,7 +11,6 @@
     <module>ls-core</module>
     <module>ls-web</module>
     <module>ls-jdbc</module>
-
   </modules>
   <packaging>pom</packaging>
 
@@ -35,39 +34,16 @@
     </dependency>
 
     <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>${cglib.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>${gson.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>RELEASE</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>${log4j.version}</version>
-    </dependency>
+
   </dependencies>
 
   <build>
-    <finalName>framework</finalName>
+    <finalName>LSFramework</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>

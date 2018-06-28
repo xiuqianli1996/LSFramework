@@ -1,13 +1,18 @@
 package com.ls.framework.jdbc;
 
+import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.annotation.LSLoader;
+import com.ls.framework.core.aop.AopAction;
+import com.ls.framework.core.aop.AopContainer;
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.core.ioc.DependencyInjector;
 import com.ls.framework.core.loader.Loader;
 import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.jdbc.annotation.LSMapper;
+import com.ls.framework.jdbc.annotation.LSTranscated;
 import com.ls.framework.jdbc.exception.LSJdbcException;
 import com.ls.framework.jdbc.session.SqlSession;
+import com.ls.framework.jdbc.transcation.TransactionAopAction;
 
 import java.util.List;
 import java.util.Set;
@@ -43,5 +48,18 @@ public class JdbcLoader implements Loader {
         }
 
         DependencyInjector.injectAll(); //重新进行依赖注入
+
+        //给所有LSBean注解并且类里包含LSTranscated注解的类加上事务拦截
+        TransactionAopAction transactionAopAction = new TransactionAopAction();
+        ClassUtil.getClassesByAnnotation(classSet, LSBean.class)
+                .stream()
+                .filter(clazz -> ClassUtil.hasAnnotation(clazz, LSTranscated.class))
+                .forEach(clazz -> {
+                    List<AopAction> list = AopContainer.getClassAopActionChainOrNew(clazz);
+                    list.add(transactionAopAction);
+                    AopContainer.putClassAopActionChain(clazz, list);
+                });
     }
+
+
 }

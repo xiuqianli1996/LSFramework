@@ -52,6 +52,11 @@ public class SimpleDataSource implements DataSource{
 
     public void setDriver(String driver) {
         this.driver = driver;
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public SimpleDataSource() {
@@ -66,6 +71,11 @@ public class SimpleDataSource implements DataSource{
         this.username = username;
         this.password = password;
         this.driver = driver;
+        try {
+            Class.forName(driver);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private Connection connecting() throws SQLException {

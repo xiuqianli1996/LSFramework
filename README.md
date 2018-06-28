@@ -17,7 +17,6 @@
 
 1. cache模块
 
-2.扫描jar包class
 
 #### 主要依赖包
 
@@ -60,7 +59,7 @@ public class Service {
 初始化时会扫描@LSBean注解修饰的类实例化到bean容器中，必须有无参构造函数，目前需要依赖注入的类成员变量只支持@LSAutowired注解注入。
 因为是先全部实例化后进行依赖注入，所以不会有循环依赖
 
-@LSConfiguration注解，会扫描LSConfiguration注解的类里的所有@LSBean注解修饰的方法，将返回值注入bean容器，方法参数是需要注入的参数, @LSParam标注注入的beanName
+@LSConfiguration注解，会扫描LSConfiguration注解的类里的所有@LSBean注解修饰的方法，将返回值注入bean容器，方法参数是需要注入的参数, @LSAutowired标注注入的beanName,发现没法控制加载顺序，所以改成根据方法名排序后执行，所以需要控制同一个配置类里的方法执行顺序的时候方法名可定义成这样：get1XXX,get2XXX
 
 ```java
 @LSConfiguration
@@ -79,7 +78,7 @@ public class TestConfig {
 [
   {
     "name": "testBean2", //在bean容器中的名字
-    "className": "demo.web.TestBean2", //类名
+    "className": "com.ls.framework.core.bean.TestBean2", //类名
     "constructor": [10, "${testBean}"], //构造函数的参数，个数和顺序必须一一对应
     "properties": { //成员变量，键值对结构
       "val1": 1,
@@ -124,6 +123,46 @@ public class Action3 extends AopAction {
 
 4.JDBC
 
+可直接查询javabean, bean数组， beanList，参数只能传基本类型或者基本类型的数组、集合
+
+```java
+@LSMapper
+public interface TestMapper2 {
+
+    @LSQuery("SELECT * FROM  tbl_result")
+    List<ResultBean> selectList();
+
+    @LSQuery("SELECT count(*) FROM  tbl_result")
+    long selectCount();
+
+
+    @LSQuery("SELECT * FROM  tbl_result limit 1")
+    ResultBean selectOne();
+
+    @LSQuery("SELECT * FROM  tbl_result WHERE day = ${day} limit 1")
+    ResultBean selectOneByDay(@LSDbParam("day")String day);
+
+    @LSQuery("SELECT * FROM  tbl_result")
+    ResultBean[] selectArray();
+
+    @LSQuery("INSERT INTO tbl_result VALUES(${day}, ${result})")
+    @LSModifying
+    long insert(@LSDbParam("result") String result, @LSDbParam("day") String day);
+
+    @LSQuery("UPDATE tbl_result SET result=${result} WHERE day = ${day}")
+    @LSModifying
+    long update(@LSDbParam("result") String result, @LSDbParam("day") String day);
+
+    @LSQuery("UPDATE tbl_result SET result=${result} WHERE day = ${day}")
+    @LSModifying
+    void updateWithoutReturn(@LSDbParam("result") String result, @LSDbParam("day") String day);
+
+    @LSQuery("DELETE FROM tbl_result WHERE day = ${day}")
+    @LSModifying
+    long delete(@LSDbParam("day") String day);
+
+}
+```
 具体可查看单元测试
 
 #### 感谢

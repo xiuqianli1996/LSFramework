@@ -2,6 +2,7 @@ package com.ls.framework.core.ioc.factory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.ls.framework.core.aop.AopHelper;
 import com.ls.framework.core.constant.Constants;
 import com.ls.framework.core.exception.LSException;
 import com.ls.framework.core.ioc.BeanContainer;
@@ -54,6 +55,9 @@ public class JsonBeanFactory implements BeanFactory {
 
     private void initBeanInfoList(String configPath) {
         InputStream inputStream = ClassUtil.getClassLoader().getResourceAsStream(configPath);
+        if (inputStream == null) {
+            return;
+        }
         byte[] buffer = new byte[0];
         try {
             buffer = new byte[inputStream.available()];
@@ -136,7 +140,7 @@ public class JsonBeanFactory implements BeanFactory {
             if (arg.getClass() != type) {
                 throw new RuntimeException("can not found bean by name is " + argName + ",type is wrong");
             }
-            return arg;
+            return AopHelper.enhance(arg);
         } else {
             return ConvertUtil.convert(value, type);
         }

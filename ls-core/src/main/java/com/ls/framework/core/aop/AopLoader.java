@@ -11,6 +11,7 @@ import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.core.utils.CollectionKit;
 import com.ls.framework.core.utils.StringKit;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,10 +34,6 @@ public class AopLoader implements Loader {
             Class<?> clazz = obj.getClass();
             if (clazz.isAssignableFrom(AopAction.class)) {
                 continue; //不强化Aop拦截类
-            }
-            if (!clazz.isAnnotationPresent(LSBean.class)
-                    && CollectionKit.isEmptyCollection(AopContainer.getClassAopActionChain(clazz))) {
-                continue;//不是LSBean注解的类，且切面列表为空的类不加强
             }
             Object enhanceInstance = AopHelper.enhance(obj);
             beanMap.put(entry.getKey(), enhanceInstance);

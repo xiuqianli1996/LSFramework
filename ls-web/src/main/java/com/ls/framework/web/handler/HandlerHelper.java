@@ -8,12 +8,16 @@ import org.apache.log4j.Logger;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HandlerHelper {
 
-    private static final Logger logger = Logger.getLogger(HandlerHelper.class);
+    private static final String pathParamPlaceholderRegx = "\\{(\\w+)\\}";
+    private static final String pathParamRegx = "([0-9a-zA-Z\\\\-_]+)";
+
+//    private static final Logger logger = Logger.getLogger(HandlerHelper.class);
 
     /**
      * 装载路由
@@ -31,13 +35,13 @@ public class HandlerHelper {
             mappingUrl = mappingUrl.replaceAll("/+", "/");
             buildMapping(clazz, method, mappingUrl);
 
-            logger.info("mapping \"" + mappingUrl + "\" to " + clazz.getName() + "." + method.getName());
+//            logger.info("mapping \"" + mappingUrl + "\" to " + clazz.getName() + "." + method.getName());
 
         }
     }
 
     private static void buildMapping(Class<?> controllerClass, Method actionMethod, String mappingUrl) {
-        String regxUrl = mappingUrl.replaceAll("\\{\\w+\\}", "(\\\\w+)");
+        String regxUrl = mappingUrl.replaceAll(pathParamPlaceholderRegx, pathParamRegx);
 //        Pattern pattern = Pattern.compile(regxUrl);
 
         ActionHandler actionHandler = new ActionHandler();
@@ -48,7 +52,7 @@ public class HandlerHelper {
         actionHandler.setMappingUrl(mappingUrl);
         actionHandler.setRegxUrl(regxUrl);
 
-        Pattern pathParamNamePattern = Pattern.compile("\\{(\\w+)\\}");
+        Pattern pathParamNamePattern = Pattern.compile(pathParamPlaceholderRegx);
         Matcher matcher = pathParamNamePattern.matcher(mappingUrl);
         List<String> pathParamNames = new ArrayList<>();
         while (matcher.find()) {
@@ -60,4 +64,20 @@ public class HandlerHelper {
 
         HandlerContainer.add(actionHandler);
     }
+
+//    public static void main(String[] args) {
+//        String url = "/get/{day}";
+//        Pattern pathParamNamePattern = Pattern.compile(pathParamPlaceholderRegx);
+//        Matcher matcher = pathParamNamePattern.matcher(url);
+//        if (matcher.find()) {
+//            System.out.println(matcher.group(1));
+//        }
+//        url = url.replaceAll(pathParamPlaceholderRegx, pathParamRegx);
+//        Pattern paramPattern = Pattern.compile(url);
+//        String realurl = "/get/2017-5-22";
+//        matcher = paramPattern.matcher(realurl);
+//        if (matcher.find()) {
+//            System.out.println(matcher.group(1));
+//        }
+//    }
 }

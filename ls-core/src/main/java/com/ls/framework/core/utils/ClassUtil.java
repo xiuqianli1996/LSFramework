@@ -5,8 +5,11 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public class ClassUtil {
@@ -53,10 +56,10 @@ public class ClassUtil {
 //                System.out.println(url);
                 String protocol = url.getProtocol();
                 if ("file".equals(protocol)) {
-                    addClass(classSet, url.getFile(), packageName);
+                    addFileClass(classSet, url.getFile(), packageName);
+                } else if ("jar".equals(protocol)) {
+                    addJarClass(classSet, (JarURLConnection) url.openConnection(), packageName);
                 }
-                //暂留：扫描jar
-//                System.out.println(url);
             }
             return classSet;
         } catch (IOException e) {
@@ -66,7 +69,7 @@ public class ClassUtil {
 
     }
     
-    private static void addClass(Set<Class<?>> classSet, String packagePath, String packageName) {
+    private static void addFileClass(Set<Class<?>> classSet, String packagePath, String packageName) {
         File classDir = new File(packagePath);
 //        System.out.println(classDir.exists());
         File[] files = classDir.listFiles(new FileFilter() {
@@ -86,23 +89,57 @@ public class ClassUtil {
                     classSet.addAll(set);
             } else {
                 String className = fileJavaName.replace(".class", "");
-                Class<?> clazz;
-				try {
-					clazz = Class.forName(className);
-                    classSet.add(clazz);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new RuntimeException("Can not load class:" + className);
-				} catch (NoClassDefFoundError e) {
-
-                }
-                
+                addClass(classSet, className);
             }
+        }
+    }
+
+    private static void addJarClass(Set<Class<?>> classSet, JarURLConnection urlConnection, String pkgName) {
+        if (urlConnection == null)
+            return;
+        try {
+            JarFile jarFile = urlConnection.getJarFile();
+            if (jarFile == null)
+                return;
+            Enumeration<JarEntry> jarEntryEnumeration = jarFile.entries();
+            while (jarEntryEnumeration.hasMoreElements()) {
+                JarEntry jarEntry = jarEntryEnumeration.nextElement();
+                String entryName = jarEntry.getName().replaceAll("/", ".");
+                if (entryName.endsWith(".class") && entryName.startsWith(pkgName)) {
+                    addClass(classSet, entryName.replace(".class", ""));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static void addClass(Set<Class<?>> classSet, String className) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(className);
+            classSet.add(clazz);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Can not load class:" + className);
+        } catch (NoClassDefFoundError e) {
+
         }
     }
 
     public static String getFullMethodName(Method method) {
         return String.format("%s.%s", method.getDeclaringClass().getName(), method.getName());
+    }
+
+    public static boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+        if (clazz.isAnnotationPresent(annotationClass))
+            return true;
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(annotationClass))
+                return true;
+        }
+        return false;
     }
 
 }
