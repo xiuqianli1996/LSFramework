@@ -9,6 +9,9 @@ import java.lang.reflect.*;
 
 public class DependencyInjector {
 
+    /**
+     * 遍历bean容器里的所有对象，依次注入
+     */
     public static void injectAll() {
         DependencyInjector injector = new DependencyInjector();
         for (Object obj : BeanContainer.allBeans()) {
@@ -23,6 +26,11 @@ public class DependencyInjector {
         injectBySetMethod(clazz, obj);
     }
 
+    /**
+     * 遍历成员变量进行注入
+     * @param clazz
+     * @param obj
+     */
     private void injectByField(Class<?> clazz, Object obj) {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
@@ -79,6 +87,12 @@ public class DependencyInjector {
         }
     }
 
+    /**
+     * 尝试根据LSAutowired给的beanName从容器里获取对象，为空就按类名获取
+     * @param lsAutowired
+     * @param className
+     * @return
+     */
     private Object getInjectVal(LSAutowired lsAutowired, String className) {
         String beanName = lsAutowired.value();
         if (StringKit.isBlank(beanName)) {

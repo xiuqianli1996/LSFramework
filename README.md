@@ -3,6 +3,14 @@
 #### 项目介绍
 手写山寨版"spring"，学习aop、ioc思想的demo，没看过spring的源码，因为实在是太庞大了，参考部分网上博客及开源代码完成。
 
+#### 其他资源
+
+1. [测试项目 -- test-emxple分支](https://gitee.com/981764793/LSFramework/tree/test-example/)
+
+2. 关键代码笔记，不想看全部代码又想简单了解一下的大佬可以看看这个：
+
+    - [手写山寨spring基础功能 - IOC](https://zhuanlan.zhihu.com/p/38610359)
+    - [手写山寨spring基础功能 - AOP](https://zhuanlan.zhihu.com/p/38660294)
 
 #### 进度记录
 

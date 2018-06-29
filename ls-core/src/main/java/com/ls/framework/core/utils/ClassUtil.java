@@ -94,6 +94,12 @@ public class ClassUtil {
         }
     }
 
+    /**
+     * 添加jar包里的类
+     * @param classSet
+     * @param urlConnection
+     * @param pkgName
+     */
     private static void addJarClass(Set<Class<?>> classSet, JarURLConnection urlConnection, String pkgName) {
         if (urlConnection == null)
             return;
@@ -115,6 +121,11 @@ public class ClassUtil {
 
     }
 
+    /**
+     * 根据类名加载类加入结果集
+     * @param classSet
+     * @param className
+     */
     private static void addClass(Set<Class<?>> classSet, String className) {
         Class<?> clazz;
         try {

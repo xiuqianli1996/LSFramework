@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class JsonBeanFactory implements BeanFactory {
 
     private List<BeanInfo> beanInfoList = null;
-    private final static Pattern BEAN_REF_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}");
+    private final static Pattern BEAN_REF_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}"); //对象关系占位符正则匹配
 
     @Override
     public void loadBean(Set<Class<?>> classSet) {
@@ -67,18 +67,29 @@ public class JsonBeanFactory implements BeanFactory {
             e.printStackTrace();
         }
         if (buffer.length > 0) {
-            beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType());
+            beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType()); // gson解析BeanInfo集合
         }
 
     }
 
+    /**
+     *
+     * 根据properties的内容进行成员变量注入
+     * @param beanInfo
+     * @param clazz
+     * @return
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws InvocationTargetException
+     * @throws NoSuchFieldException
+     */
     private Object injectProperty(BeanInfo beanInfo, Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException {
         Object instance = getInstanceByConstructor(beanInfo.getConstructor(), clazz);
 
         Map<String, String> propertiesMap = beanInfo.getProperties();
 
         if (instance == null) {
-            instance = clazz.newInstance();
+            instance = clazz.newInstance(); //尝试根据构造函数新建实例失败直接调用无参构造函数
         }
 
         //进行成员变量注入
@@ -98,6 +109,15 @@ public class JsonBeanFactory implements BeanFactory {
         return instance;
     }
 
+    /**
+     * 尝试根据constructor内容进行构造函数注入并返回实例，constructor内参数长度、顺序必须和某一构造函数一致
+     * @param constructorParamList
+     * @param clazz
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     */
     private Object getInstanceByConstructor(List<String> constructorParamList, Class<?> clazz) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         int constructorParamCount = constructorParamList == null ? 0 : constructorParamList.size();
         Object instance = null;
@@ -127,6 +147,12 @@ public class JsonBeanFactory implements BeanFactory {
         return instance;
     }
 
+    /**
+     * 获取属性的对象，根据参数占位符判断是否引用其他对象对象，基本类型直接调用工具类转换成相应的类型
+     * @param value
+     * @param type
+     * @return
+     */
     private Object getPropertyObj(String value, Class type) {
         if (StringKit.isBlank(value))
             return null;
