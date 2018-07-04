@@ -19,7 +19,7 @@ public class RequestContext {
         return responseThreadLocal.get();
     }
 
-    public static void setRequest(HttpServletResponse value) {
+    public static void setResponse(HttpServletResponse value) {
         responseThreadLocal.set(value);
     }
 }

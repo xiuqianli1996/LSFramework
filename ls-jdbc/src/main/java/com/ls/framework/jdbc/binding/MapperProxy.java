@@ -27,7 +27,7 @@ public class MapperProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         MapperData mapperData = getMapperData(method);
-        mapperData.sortParams(objects);
+        mapperData.sortParams(objects, method.getParameters());
         String sql = mapperData.buildSql(objects);
 //        System.out.println(sql);
 //        for (Object obj : objects) {

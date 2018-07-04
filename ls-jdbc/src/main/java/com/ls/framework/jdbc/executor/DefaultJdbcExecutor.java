@@ -6,6 +6,7 @@ import com.ls.framework.jdbc.exception.LSJdbcException;
 import com.ls.framework.jdbc.session.ConnectionContext;
 import com.ls.framework.jdbc.util.JdbcRSConvertUtil;
 
+import java.lang.reflect.Array;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -143,8 +144,16 @@ public class DefaultJdbcExecutor implements JdbcExecutor {
     private void fillPreparedStatementParas(PreparedStatement preparedStatement, Object[] paras) throws SQLException {
         if (null == paras)
             return;
-        for (int i = 0; i < paras.length; i++){
-            preparedStatement.setObject(i + 1, paras[i]);
+        int pos = 1;
+        for (Object obj : paras){
+            if (obj.getClass().isArray()) { //填充数组数据
+                int len = Array.getLength(obj);
+                for (int j = 0; j < len; j++) {
+                    preparedStatement.setObject(pos++, Array.get(obj, j));
+                }
+                continue;
+            }
+            preparedStatement.setObject(pos++, obj);
         }
     }
 

@@ -14,6 +14,8 @@
 
 #### 进度记录
 
+2018.07.02 调整jdbc模块，修复bug，想起没测试注解事务是否正常，测试后发现因为loader加载顺序以及AOP不再默认强化bean容器里的所有bean导致service没有强化事务不生效，设置JdbcLoader在IocLoader和AopLoader之间执行。修改为参数只能传数组类型， 完成数组参数的填充，用于in条件查询
+
 2018.06.27 完成jdbc模块，支持查询实体、数组、List集合，单元测试基本完成，但是在测试模块里怎么都引入不了，暂时放下
 
 2018.06.26 完成了拥有基础功能的web模块，注解式路由、request参数和path参数绑定、jsp视图、json视图、全局异常处理，详见test-example/OneController（事实证明基础还是很弱，基础骨架半天完成，填坑倒是花了一天多）
@@ -132,6 +134,7 @@ public class Action3 extends AopAction {
 4.JDBC
 
 可直接查询javabean, bean数组， beanList，参数只能传基本类型或者基本类型的数组、集合
+实现注解式事务，两种方式, service类或者controller类上加上LStansacted注解或者Around(TransactionAopAction.class)注解
 
 ```java
 @LSMapper

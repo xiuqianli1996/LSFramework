@@ -1,7 +1,6 @@
 package com.ls.framework.jdbc.binding;
 
 import com.ls.framework.jdbc.annotation.LSDbParam;
-import com.ls.framework.jdbc.annotation.LSQuery;
 import com.ls.framework.jdbc.exception.LSJdbcException;
 
 import java.lang.reflect.*;
@@ -14,19 +13,19 @@ public class MapperData {
     private static final String paramRegex = "\\$\\{(\\w+)\\}";
 
     private String sql;
-    private List<String> paramNames = new ArrayList<>();
-    private Method method;
+    private List<String> sqlParamNames = new ArrayList<>();
+//    private Method method;
     private boolean modifying = false;
 
     public MapperData(Method method, String sql, boolean modifying) {
         this.sql = sql;
         this.modifying = modifying;
-        this.method = method;
+//        this.method = method;
 
         Pattern paramNamePattern = Pattern.compile(paramRegex);
         Matcher matcher = paramNamePattern.matcher(sql);
         while (matcher.find()) {
-            paramNames.add(matcher.group(1));
+            sqlParamNames.add(matcher.group(1));
         }
     }
 
@@ -44,22 +43,22 @@ public class MapperData {
         return realSql;
     }
 
-    public void sortParams(Object[] params) {
-        if (params.length != paramNames.size()) {
+    public void sortParams(Object[] params, Parameter[] parameters) {
+        if (params.length != sqlParamNames.size()) {
             throw new LSJdbcException("The param length is invalid");
         }
 
-        Map<String, Object> paramMap = buildParamMap(params);
+        Map<String, Object> paramMap = buildParamMap(params, parameters);
         for (int i = 0; i < params.length; i++) {
-            params[i] = paramMap.get(paramNames.get(i));
+            params[i] = paramMap.get(sqlParamNames.get(i));
         }
     }
 
-    private Map<String, Object> buildParamMap(Object[] params) {
+    private Map<String, Object> buildParamMap(Object[] params, Parameter[] parameters) {
 
         Map<String, Object> resultMap = new HashMap<>();
         int pos = 0;
-        for (Parameter parameter : method.getParameters()) {
+        for (Parameter parameter : parameters) {
             LSDbParam lsDbParam = parameter.getAnnotation(LSDbParam.class);
             String name = lsDbParam.value();
             resultMap.put(name, params[pos++]);

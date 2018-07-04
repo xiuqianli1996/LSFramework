@@ -24,6 +24,25 @@ public class JsonBeanFactory implements BeanFactory {
     private List<BeanInfo> beanInfoList = null;
     private final static Pattern BEAN_REF_PATTERN = Pattern.compile("\\$\\{(\\w+)\\}"); //对象关系占位符正则匹配
 
+    private void initBeanInfoList(String configPath) {
+        InputStream inputStream = ClassUtil.getClassLoader().getResourceAsStream(configPath);
+        if (inputStream == null) {
+            return;
+        }
+        byte[] buffer = new byte[0];
+        try {
+            buffer = new byte[inputStream.available()];
+            inputStream.read(buffer);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (buffer.length > 0) {
+            beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType()); // gson解析BeanInfo集合
+        }
+
+    }
+
     @Override
     public void loadBean(Set<Class<?>> classSet) {
         String configPath = PropKit.get(Constants.CONFIG_BEANS_CONFIG);
@@ -51,25 +70,6 @@ public class JsonBeanFactory implements BeanFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void initBeanInfoList(String configPath) {
-        InputStream inputStream = ClassUtil.getClassLoader().getResourceAsStream(configPath);
-        if (inputStream == null) {
-            return;
-        }
-        byte[] buffer = new byte[0];
-        try {
-            buffer = new byte[inputStream.available()];
-            inputStream.read(buffer);
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (buffer.length > 0) {
-            beanInfoList = new Gson().fromJson(new String(buffer), new TypeToken<List<BeanInfo>>(){}.getType()); // gson解析BeanInfo集合
-        }
-
     }
 
     /**

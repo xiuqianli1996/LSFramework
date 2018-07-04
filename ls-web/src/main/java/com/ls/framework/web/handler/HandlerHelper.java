@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 
 public class HandlerHelper {
 
-    private static final String pathParamPlaceholderRegx = "\\{(\\w+)\\}";
-    private static final String pathParamRegx = "([0-9a-zA-Z\\\\-_]+)";
+    private static final String pathParamPlaceholderRegx = "\\{(\\w+)\\}"; //LSRequestMapping注解的path参数名正则
+    private static final String pathParamRegx = "([0-9a-zA-Z\\\\-_]+)";//真正的参数正则，把占位符换成这玩意
 
 //    private static final Logger logger = Logger.getLogger(HandlerHelper.class);
 
@@ -25,14 +25,14 @@ public class HandlerHelper {
      */
     public static void initRoute(Class<?> clazz) {
 //        System.out.println(clazz.getName());
+        LSRequestMapping classRequestMapping = clazz.getAnnotation(LSRequestMapping.class);
         for (Method method : clazz.getMethods()){
             if (!method.isAnnotationPresent(LSRequestMapping.class)) {
                 continue;
             }
-            LSRequestMapping classRequestMapping = clazz.getAnnotation(LSRequestMapping.class);
             LSRequestMapping methodRequestMapping = method.getAnnotation(LSRequestMapping.class);
             String mappingUrl = "/" + classRequestMapping.value() + "/" + methodRequestMapping.value();
-            mappingUrl = mappingUrl.replaceAll("/+", "/");
+            mappingUrl = mappingUrl.replaceAll("/+", "/");//干掉多余的斜杠
             buildMapping(clazz, method, mappingUrl);
 
 //            logger.info("mapping \"" + mappingUrl + "\" to " + clazz.getName() + "." + method.getName());

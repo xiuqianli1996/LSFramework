@@ -3,6 +3,7 @@ package com.ls.framework.web;
 
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.context.ApplicationContext;
+import com.ls.framework.web.context.RequestContext;
 import com.ls.framework.web.handler.ActionHandler;
 import com.ls.framework.web.handler.HandlerContainer;
 import com.ls.framework.web.resolver.ExceptionResolverContainer;
@@ -23,6 +24,8 @@ public class LSDispatchServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+        RequestContext.setRequest(req);
+        RequestContext.setResponse(resp);
         String formatUrl = req.getRequestURI().replaceAll("/+", "/");
         ActionHandler actionHandler = HandlerContainer.get(formatUrl);
 //        System.out.println(req.getRequestURI());

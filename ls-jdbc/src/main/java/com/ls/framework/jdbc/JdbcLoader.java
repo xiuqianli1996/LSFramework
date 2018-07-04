@@ -17,7 +17,7 @@ import com.ls.framework.jdbc.transcation.TransactionAopAction;
 import java.util.List;
 import java.util.Set;
 
-@LSLoader
+@LSLoader(20)
 public class JdbcLoader implements Loader {
     @Override
     public void doLoad(Set<Class<?>> classSet) {
@@ -51,6 +51,7 @@ public class JdbcLoader implements Loader {
 
         //给所有LSBean注解并且类里包含LSTranscated注解的类加上事务拦截
         TransactionAopAction transactionAopAction = new TransactionAopAction();
+        BeanContainer.put(TransactionAopAction.class.getName(), transactionAopAction);
         ClassUtil.getClassesByAnnotation(classSet, LSBean.class)
                 .stream()
                 .filter(clazz -> ClassUtil.hasAnnotation(clazz, LSTranscated.class))

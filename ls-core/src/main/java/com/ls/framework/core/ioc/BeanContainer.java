@@ -37,11 +37,14 @@ public class BeanContainer {
     }
 
     public static void putBeanByAnnotation(Class<?> clazz, LSBean lsBean, Object instance) {
-        put(clazz.getName(), instance); //先按类名存一次
         String name = lsBean.value().trim();
         if (StringKit.notBlank(name)) {
-            put(name, instance); //再按注解名存一次
+            put(name, instance); //这里修改成有注解的名就只按那个名，不再覆盖之前的类名和实现的接口类名
+            return;
         }
+
+        put(clazz.getName(), instance); //先按类名存一次
+
         Class<?>[] interfaces = clazz.getInterfaces();
 
         if (!CollectionKit.isEmptyArray(interfaces)) {//再按实现的接口的类名存一次

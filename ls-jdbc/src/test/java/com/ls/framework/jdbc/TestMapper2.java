@@ -13,6 +13,9 @@ public interface TestMapper2 {
     @LSQuery("SELECT * FROM  tbl_result")
     List<ResultBean> selectList();
 
+    @LSQuery("SELECT * FROM  tbl_result WHERE day in (${days})")
+    List<ResultBean> selectList(@LSDbParam("days") String[] days);
+
     @LSQuery("SELECT count(*) FROM  tbl_result")
     long selectCount();
 

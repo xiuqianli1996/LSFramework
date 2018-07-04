@@ -11,7 +11,7 @@ import java.util.Map;
 public class ServletRequestParamResolver implements ParameterResolver {
     @Override
     public boolean filter(Method actionMethod, Parameter parameter, HttpServletRequest request, HttpServletResponse response, Map<String, String> pathParamMap) {
-        return parameter.getType() == HttpServletRequest.class;
+        return parameter.getType() == HttpServletRequest.class; //判断是否由这个类处理这个参数
     }
 
     @Override
