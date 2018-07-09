@@ -3,7 +3,9 @@ package com.ls.framework.web;
 
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.context.ApplicationContext;
+import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.web.context.RequestContext;
+import com.ls.framework.web.exception.LSMvcException;
 import com.ls.framework.web.handler.ActionHandler;
 import com.ls.framework.web.handler.HandlerContainer;
 import com.ls.framework.web.resolver.ExceptionResolverContainer;
@@ -33,15 +35,15 @@ public class LSDispatchServlet extends HttpServlet {
             Object result = null;
             Exception exception = null;
             try {
-                result = actionHandler.invoke(formatUrl, req, resp);
+                result = actionHandler.invoke(formatUrl, req, resp);//执行action方法
             } catch (Exception e) {
                 exception = e;
             }
             try {
-                processDispatchResult(actionHandler, result, req, resp, exception);
+                processDispatchResult(actionHandler, result, req, resp, exception);//处理结果,包括异常处理
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new ServletException(e);
+                throw new ServletException(e);//没有相应的异常处理器，接着抛给servlet容器
             }
         } else {
             resp.sendError(404);
@@ -53,14 +55,17 @@ public class LSDispatchServlet extends HttpServlet {
     private void processDispatchResult(ActionHandler actionHandler, Object result, HttpServletRequest request
             , HttpServletResponse response, Exception exception) throws Exception {
         if (exception != null) {
-            result = ExceptionResolverContainer.handle(actionHandler, exception, request, response);
+            result = ExceptionResolverContainer.handle(actionHandler, exception, request, response);//遍历执行所有异常处理器，找到第一个有处理结果的
             if (result == null) {
-                throw exception;
+                throw exception;//遍历完之后异常没有被处理掉就直接往上抛
             }
         }
 
+        // 开始处理action执行结果
         if (result != null) {
             ViewResolversContainer.handle(actionHandler, result, request, response);
+        } else {
+            throw new LSMvcException("The action handle result is null: " + ClassUtil.getFullMethodName(actionHandler.getActionMethod()));
         }
     }
 }

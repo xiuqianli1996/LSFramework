@@ -6,6 +6,7 @@ import com.ls.framework.web.handler.ActionHandler;
 import com.ls.framework.web.resolver.view.ViewResolver;
 import com.ls.framework.web.template.TemplateEngine;
 import com.ls.framework.web.template.impl.JsonTemplateEngine;
+import com.ls.framework.web.utils.ControllerKit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,10 +18,7 @@ public class JsonViewResolver implements ViewResolver {
 
     @Override
     public boolean filter(ActionHandler actionHandler, Object result, HttpServletRequest request, HttpServletResponse response) {
-        Method actionMethod = actionHandler.getActionMethod();
-        Class<?> controllerClass = actionHandler.getControllerClass();
-        return actionMethod.isAnnotationPresent(LSResponseBody.class)
-                || controllerClass.isAnnotationPresent(LSResponseBody.class);
+        return ControllerKit.isResponseBody(actionHandler);
     }
 
     @Override

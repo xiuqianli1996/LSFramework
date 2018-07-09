@@ -13,7 +13,7 @@ import java.io.IOException;
 public class JsonTemplateEngine implements TemplateEngine {
     private JsonEngine jsonEngine = new GsonJsonEngine();
 
-    public void setJson(JsonEngine jsonEngine) {
+    public void setJsonEngine(JsonEngine jsonEngine) {
         this.jsonEngine = jsonEngine;
     }
 
@@ -27,7 +27,6 @@ public class JsonTemplateEngine implements TemplateEngine {
         }
         response.setContentType("application/json");
         try {
-//            response.setContentLength(jsonStr.length());
             response.getWriter().write(jsonStr);
         } catch (IOException e) {
             e.printStackTrace();

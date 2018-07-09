@@ -2,6 +2,7 @@ package com.ls.framework.web.template.impl;
 
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.web.context.RequestContext;
+import com.ls.framework.web.exception.LSMvcException;
 import com.ls.framework.web.template.TemplateEngine;
 
 import javax.servlet.ServletException;
@@ -29,7 +30,7 @@ public class JspTemplateEngine implements TemplateEngine {
         try {
             request.getRequestDispatcher(viewPath).forward(request, response);
         } catch (ServletException | IOException e) {
-            e.printStackTrace();
+            throw new LSMvcException(e.getCause());
         }
 
     }
