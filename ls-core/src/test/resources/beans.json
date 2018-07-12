@@ -22,7 +22,28 @@
     "properties": {
       "val1": 1,
       "val2": "123"
-//    , "testBean": "${testBean1}"
+   // , "testBean": "${testBean1}"
+    }
+  },
+  {
+    "name": "circleA",
+    "className": "com.ls.framework.core.bean.CircleA",
+    "properties": {
+      "o": "${circleC}"
+    }
+  },
+  {
+    "name": "circleB",
+    "className": "com.ls.framework.core.bean.CircleB",
+    "properties": {
+      "o": "${circleA}"
+    }
+  },
+  {
+    "name": "circleC",
+    "className": "com.ls.framework.core.bean.CircleC",
+    "properties": {
+      "o": "${circleB}"
     }
   }
 ]

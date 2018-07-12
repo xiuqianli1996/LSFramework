@@ -53,16 +53,33 @@ public class JsonBeanFactory implements BeanFactory {
         if (CollectionKit.isEmptyCollection(beanInfoList))
             return;
         beanInfoList.forEach(this::addBeanByBeanInfo);
+        //修改成先把bean实例存到容器再对属性进行注入
+        beanInfoList.forEach(beanInfo -> {
+            Object instance = BeanContainer.getBean(beanInfo.getName());
+            try {
+                injectProperty(instance, beanInfo.getProperties(), instance.getClass());
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                e.printStackTrace();
+                throw new LSException(e.getCause());
+            }
+        });
     }
 
     private void addBeanByBeanInfo(BeanInfo beanInfo) {
         String className = beanInfo.getClassName();
         String beanName = beanInfo.getName();
 
+        if (StringKit.isBlank(beanName) || StringKit.isBlank(className)) {
+            throw new LSException("beanName or className can not be null");
+        }
+
         try {
             Class<?> clazz = Class.forName(className);
 
-            Object instance = injectProperty(beanInfo, clazz);
+            Object instance = getInstanceByConstructor(beanInfo.getConstructor(), clazz);
+            if (instance == null) {
+                instance = clazz.newInstance(); //尝试根据构造函数新建实例失败直接调用无参构造函数
+            }
 
             BeanContainer.put(beanName, instance); // 按定义的名字存一遍
             BeanContainer.put(className, instance);// 再按类名存一遍
@@ -73,24 +90,16 @@ public class JsonBeanFactory implements BeanFactory {
     }
 
     /**
-     *
-     * 根据properties的内容进行成员变量注入
-     * @param beanInfo
+     * 根据properties的内容对instance进行成员变量注入
+     * @param instance
+     * @param propertiesMap
      * @param clazz
      * @return
      * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws InvocationTargetException
      * @throws NoSuchFieldException
      */
-    private Object injectProperty(BeanInfo beanInfo, Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException {
-        Object instance = getInstanceByConstructor(beanInfo.getConstructor(), clazz);
-
-        Map<String, String> propertiesMap = beanInfo.getProperties();
-
-        if (instance == null) {
-            instance = clazz.newInstance(); //尝试根据构造函数新建实例失败直接调用无参构造函数
-        }
+    private Object injectProperty(Object instance, Map<String, String> propertiesMap, Class<?> clazz) throws IllegalAccessException
+            , NoSuchFieldException {
 
         //进行成员变量注入
         if (propertiesMap != null && propertiesMap.size() > 0) {

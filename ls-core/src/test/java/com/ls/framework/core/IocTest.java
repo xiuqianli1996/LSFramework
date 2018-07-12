@@ -1,9 +1,6 @@
 package com.ls.framework.core;
 
-import com.ls.framework.core.bean.TestBean;
-import com.ls.framework.core.bean.TestBean2;
-import com.ls.framework.core.bean.TestBean3;
-import com.ls.framework.core.bean.TestBean4;
+import com.ls.framework.core.bean.*;
 import com.ls.framework.core.context.ApplicationContext;
 import com.ls.framework.core.ioc.BeanContainer;
 import org.junit.Before;
@@ -32,6 +29,15 @@ public class IocTest {
         TestBean2 testBean2 = app.getBean("testBean2");
         assertNotNull(testBean2);
         assertEquals(testBean2.getTestBean(), testBean);
+        CircleA circleA = app.getBean(CircleA.class);
+        CircleB circleB = app.getBean(CircleB.class);
+        CircleC circleC = app.getBean(CircleC.class);
+        assertNotNull(circleA);
+        assertNotNull(circleB);
+        assertNotNull(circleC);
+        assertEquals(circleA.o, circleC);
+        assertEquals(circleB.o, circleA);
+        assertEquals(circleC.o, circleB);
     }
 
     @Test
