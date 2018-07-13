@@ -10,6 +10,8 @@ public interface JdbcExecutor {
 
     <T> T queryBean(Connection connection, Class<T> clazz, String sql, Object[] paras);
 
+    List<Map<String, Object>> executeQuery(Connection connection, String sql, Object[] paras);
+
     long executeUpdate(Connection connection, String sql, Object[] params);
 
     long queryLong(Connection connection, String sql, Object[] params);

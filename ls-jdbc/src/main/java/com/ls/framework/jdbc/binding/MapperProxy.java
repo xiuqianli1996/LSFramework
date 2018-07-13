@@ -27,7 +27,8 @@ public class MapperProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         MapperData mapperData = getMapperData(method);
-        mapperData.sortParams(objects, method.getParameters());
+//        mapperData.sortParams(objects, method.getParameters());
+        Object[] args = mapperData.sortParams(objects);
         String sql = mapperData.buildSql(objects);
 //        System.out.println(sql);
 //        for (Object obj : objects) {
@@ -35,7 +36,7 @@ public class MapperProxy implements MethodInterceptor {
 //        }
 //        return sql;
         if (mapperData.isModifying()) {
-            return sqlSession.executeUpdate(sql, objects);
+            return sqlSession.executeUpdate(sql, args);
         }
         Class<?> returnType = method.getReturnType();
         if (List.class.isAssignableFrom(returnType)) {
@@ -47,19 +48,19 @@ public class MapperProxy implements MethodInterceptor {
             } else {
                 realType = (Class)type;
             }
-            return sqlSession.selectList(realType, sql, objects);
+            return sqlSession.selectList(realType, sql, args);
         }
         if (returnType.isArray()) {
 //            System.out.println(returnType.getComponentType());
             Class<?> realType = returnType.getComponentType();
-            List list = sqlSession.selectList(realType, sql, objects);
+            List list = sqlSession.selectList(realType, sql, args);
             Object[] result = (Object[]) Array.newInstance(realType, list.size());
             return list.toArray(result);
         }
         if (returnType == long.class || returnType == Long.class) {
-            return sqlSession.queryLong(sql, objects);
+            return sqlSession.queryLong(sql, args);
         }
-        return sqlSession.selectOne(returnType, sql, objects);
+        return sqlSession.selectOne(returnType, sql, args);
     }
 
     private MapperData getMapperData(Method method) {

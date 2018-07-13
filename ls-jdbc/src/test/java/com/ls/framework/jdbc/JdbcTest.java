@@ -20,18 +20,18 @@ public class JdbcTest {
 
     private DataSource dataSource;
     private SqlSession sqlSession;
-
+    private JdbcExecutor executor;
     @Before
     public void init() {
         String uri = "jdbc:mysql://127.0.0.1/stu_info?characterEncoding=UTF-8";
         String user = "root";
         String pwd = "123";
-        String driver = "com.mysql.cj.jdbc.Driver";
+        String driver = "com.mysql.jdbc.Driver";
         dataSource = new SimpleDataSource(uri, user, pwd, driver);
         LSDbConfiguration configuration = new LSDbConfiguration();
         configuration.setDataSource(dataSource);
 
-        JdbcExecutor executor = new DefaultJdbcExecutor(configuration.isMapUnderscoreToCamelCase());
+        executor = new DefaultJdbcExecutor(configuration.isMapUnderscoreToCamelCase());
         configuration.setExecutor(executor);
 
         sqlSession = new MySqlSession(configuration);
@@ -73,28 +73,31 @@ public class JdbcTest {
     @Test
     public void testSelectOneSpeed() throws SQLException {
         //测试JDBC模块查询单条数据10000次耗时
-
+        String sql = "SELECT * FROM  tbl_result limit 1";
 
         TestMapper2 testMapper2 = sqlSession.getMapper(TestMapper2.class);
 
         long start = System.currentTimeMillis();
         System.out.println("start jdbc module: " + start);
         int count = 0;
+        Connection connection = dataSource.getConnection();
         ConnectionContext.beginTransaction();
         for (int i = 0; i < 10000; i++) {
             testMapper2.selectOne();
+//            executor.executeQuery(connection, sql, null);
+//            sqlSession.selectOne(ResultBean.class, sql, null);
             count++;
         }
-        ConnectionContext.commitTransaction();
         long end = System.currentTimeMillis();
+        ConnectionContext.commitTransaction();
         System.out.println(String.format("select %d record, took %d ms", count, end - start));
 
         start = System.currentTimeMillis();
         System.out.println("start jdbc module: " + start);
         count = 0;
-        Connection connection = dataSource.getConnection();
+
         for (int i = 0; i < 10000; i++) {
-            jdbcSelectOne(connection);
+            jdbcSelectOne(connection, sql);
             count++;
         }
         if (connection != null) {
@@ -105,15 +108,14 @@ public class JdbcTest {
 
     }
 //
-    private void jdbcSelectOne(Connection connection) {
-        String sql = "SELECT * FROM  tbl_result limit 1";
+    private void jdbcSelectOne(Connection connection, String sql) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             preparedStatement = connection.prepareStatement(sql);
             resultSet = preparedStatement.executeQuery();
             ResultBean resultBean = new ResultBean();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 resultBean.day = resultSet.getString("day");
                 resultBean.result = resultSet.getString("result");
             }

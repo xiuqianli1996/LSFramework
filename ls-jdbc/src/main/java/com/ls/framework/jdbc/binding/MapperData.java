@@ -11,21 +11,23 @@ import java.util.regex.Pattern;
 public class MapperData {
 
     private static final String paramRegex = "\\$\\{(\\w+)\\}";
-
+    private static Pattern paramNamePattern = Pattern.compile(paramRegex);
     private String sql;
     private List<String> sqlParamNames = new ArrayList<>();
+    private Map<String, Integer> sqlParamIndexMap = new HashMap<>();
 //    private Method method;
-    private boolean modifying = false;
+    private boolean modifying;
 
     public MapperData(Method method, String sql, boolean modifying) {
         this.sql = sql;
         this.modifying = modifying;
 //        this.method = method;
-
-        Pattern paramNamePattern = Pattern.compile(paramRegex);
+        int pos = 0;
         Matcher matcher = paramNamePattern.matcher(sql);
         while (matcher.find()) {
-            sqlParamNames.add(matcher.group(1));
+            String name = matcher.group(1);
+            sqlParamNames.add(name);
+            sqlParamIndexMap.put(name, pos++);
         }
     }
 
@@ -52,6 +54,19 @@ public class MapperData {
         for (int i = 0; i < params.length; i++) {
             params[i] = paramMap.get(sqlParamNames.get(i));
         }
+    }
+
+    public Object[] sortParams(Object[] params) {
+        if (params.length != sqlParamNames.size()) {
+            throw new LSJdbcException("The param length is invalid");
+        }
+        Object[] sortedParams = new Object[params.length];
+
+        for (int i = 0; i < params.length; i++) {
+            int index = sqlParamIndexMap.get(sqlParamNames.get(i));
+            sortedParams[i] = params[index];
+        }
+        return sortedParams;
     }
 
     private Map<String, Object> buildParamMap(Object[] params, Parameter[] parameters) {

@@ -1,6 +1,7 @@
 package com.ls.framework.jdbc.base;
 
 import com.ls.framework.core.annotation.LSBean;
+import com.ls.framework.jdbc.exception.LSJdbcException;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -75,6 +76,7 @@ public class SimpleDataSource implements DataSource{
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            throw new LSJdbcException(e.getCause());
         }
     }
 

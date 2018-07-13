@@ -55,6 +55,7 @@ public class DefaultJdbcExecutor implements JdbcExecutor {
         }
     }
 
+    @Override
     public List<Map<String, Object>> executeQuery(Connection connection, String sql, Object[] paras){
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -159,10 +160,9 @@ public class DefaultJdbcExecutor implements JdbcExecutor {
 
     private List<Map<String, Object>> parseResultSet(ResultSet resultSet) {
         List<Map<String, Object>> resultList = new ArrayList<>();
-
         try {
+            ResultSetMetaData metaData = resultSet.getMetaData();
             while (resultSet.next()) {
-                ResultSetMetaData metaData = resultSet.getMetaData();
                 Map<String, Object> map = new HashMap<>();
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     String name = metaData.getColumnName(i);
@@ -178,6 +178,7 @@ public class DefaultJdbcExecutor implements JdbcExecutor {
             e.printStackTrace();
             throw new LSJdbcException(e);
         }
+
         return resultList;
     }
 
