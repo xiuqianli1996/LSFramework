@@ -11,6 +11,7 @@
 
     - [手写山寨spring基础功能 - IOC](https://zhuanlan.zhihu.com/p/38610359)
     - [手写山寨spring基础功能 - AOP](https://zhuanlan.zhihu.com/p/38660294)
+	- 。。。更多查看我的知乎专栏，从上面的笔记就可进入
 
 #### 进度记录
 
