@@ -1,7 +1,5 @@
 package com.ls.framework.web.resolver.parameter.impl;
 
-import com.ls.framework.core.utils.ConvertUtil;
-import com.ls.framework.core.utils.StringKit;
 import com.ls.framework.web.annotation.LSPathParam;
 import com.ls.framework.web.resolver.parameter.ParameterResolver;
 

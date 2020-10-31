@@ -2,12 +2,13 @@ package com.ls.framework.jdbc;
 
 import com.ls.framework.jdbc.base.SimpleDataSource;
 import com.ls.framework.jdbc.binding.MapperData;
+import com.ls.framework.jdbc.config.Constants;
 import com.ls.framework.jdbc.config.LSDbConfiguration;
 import com.ls.framework.jdbc.exception.LSJdbcException;
 import com.ls.framework.jdbc.executor.DefaultJdbcExecutor;
 import com.ls.framework.jdbc.executor.JdbcExecutor;
 import com.ls.framework.jdbc.session.ConnectionContext;
-import com.ls.framework.jdbc.session.MySqlSession;
+import com.ls.framework.jdbc.session.DefaultSqlSession;
 import com.ls.framework.jdbc.session.SqlSession;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,39 +24,29 @@ public class JdbcTest {
     private JdbcExecutor executor;
     @Before
     public void init() {
-        String uri = "jdbc:mysql://127.0.0.1/stu_info?characterEncoding=UTF-8";
+        String uri = "jdbc:mysql://127.0.0.1:3306/stu_info?characterEncoding=UTF-8";
         String user = "root";
-        String pwd = "123";
-        String driver = "com.mysql.jdbc.Driver";
+        String pwd = "";
+        String driver = "com.mysql.cj.jdbc.Driver";
         dataSource = new SimpleDataSource(uri, user, pwd, driver);
         LSDbConfiguration configuration = new LSDbConfiguration();
-        configuration.setDataSource(dataSource);
+        configuration.getDataSources().put(Constants.DEFAULT_DATASOURCE_NAME, dataSource);
 
         executor = new DefaultJdbcExecutor(configuration.isMapUnderscoreToCamelCase());
-        configuration.setExecutor(executor);
 
-        sqlSession = new MySqlSession(configuration);
+        sqlSession = new DefaultSqlSession(configuration, executor);
     }
 
     @Test
     public void testPattern() {
         String sql = "insert into user values(${das}, ${das}, ${das})";
-        MapperData mapperData = new MapperData(null, sql, true);
+        MapperData mapperData = new MapperData(null, sql, true, Constants.DEFAULT_DATASOURCE_NAME);
 
         System.out.println(mapperData.buildSql(new Object[]{"dadsa", 1, new int[] {1,2,3}}));
     }
 
     @Test
     public void testApp() {
-
-        LSDbConfiguration configuration = new LSDbConfiguration();
-        configuration.setDataSource(dataSource);
-
-        JdbcExecutor executor = new DefaultJdbcExecutor(configuration.isMapUnderscoreToCamelCase());
-        configuration.setExecutor(executor);
-
-        SqlSession sqlSession = new MySqlSession(configuration);
-
         TestMapper2 testMapper2 = sqlSession.getMapper(TestMapper2.class);
         System.out.println(testMapper2.selectOne());
         System.out.println("==========");
@@ -77,11 +68,20 @@ public class JdbcTest {
 
         TestMapper2 testMapper2 = sqlSession.getMapper(TestMapper2.class);
 
-        long start = System.currentTimeMillis();
-        System.out.println("start jdbc module: " + start);
-        int count = 0;
         Connection connection = dataSource.getConnection();
         ConnectionContext.beginTransaction();
+        // 100次连接初始化预热
+        for (int i = 0; i < 100; i++) {
+            testMapper2.selectOne();
+//            executor.executeQuery(connection, sql, null);
+//            sqlSession.selectOne(ResultBean.class, sql, null);
+        }
+
+        long start = System.currentTimeMillis();
+        System.out.println("start jdbc module: " + start);
+
+        int count = 0;
+
         for (int i = 0; i < 10000; i++) {
             testMapper2.selectOne();
 //            executor.executeQuery(connection, sql, null);
@@ -116,6 +116,7 @@ public class JdbcTest {
             resultSet = preparedStatement.executeQuery();
             ResultBean resultBean = new ResultBean();
             while (resultSet.next()) {
+                resultBean.id = resultSet.getLong("id");
                 resultBean.day = resultSet.getString("day");
                 resultBean.result = resultSet.getString("result");
             }
@@ -142,7 +143,7 @@ public class JdbcTest {
      */
     @Test
     public void testUpdateWithReturn() {
-        String day = "2017-5-22";
+        String day = "2017-5-23";
         TestMapper2 testMapper2 = sqlSession.getMapper(TestMapper2.class);
         ResultBean resultBean = testMapper2.selectOneByDay(day);
         System.out.println(resultBean);
@@ -163,7 +164,7 @@ public class JdbcTest {
      */
     @Test
     public void testUpdateWithoutReturn() {
-        String day = "2017-5-22";
+        String day = "2017-5-23";
         TestMapper2 testMapper2 = sqlSession.getMapper(TestMapper2.class);
         ResultBean resultBean = testMapper2.selectOneByDay(day);
         System.out.println(resultBean);

@@ -1,11 +1,14 @@
 package com.ls.framework.jdbc.binding;
 
-import com.ls.framework.core.utils.ClassUtil;
+import com.ls.framework.common.kit.ClassKit;
+import com.ls.framework.common.kit.MethodKit;
+import com.ls.framework.common.kit.StrKit;
+import com.ls.framework.jdbc.annotation.LSMapper;
 import com.ls.framework.jdbc.annotation.LSModifying;
 import com.ls.framework.jdbc.annotation.LSQuery;
 import com.ls.framework.jdbc.exception.LSJdbcException;
+import com.ls.framework.jdbc.session.ConnectionContext;
 import com.ls.framework.jdbc.session.SqlSession;
-import com.sun.org.apache.regexp.internal.RE;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 
@@ -13,7 +16,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 
 public class MapperProxy implements MethodInterceptor {
@@ -26,15 +28,13 @@ public class MapperProxy implements MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+        if (MethodKit.isObjectMethod(method)) {
+            return methodProxy.invokeSuper(o, objects);
+        }
         MapperData mapperData = getMapperData(method);
-//        mapperData.sortParams(objects, method.getParameters());
+        ConnectionContext.setDatasourceName(mapperData.getDataSourceName());
         Object[] args = mapperData.sortParams(objects);
-        String sql = mapperData.buildSql(objects);
-//        System.out.println(sql);
-//        for (Object obj : objects) {
-//            System.out.println(obj);
-//        }
-//        return sql;
+        String sql = mapperData.buildSql(args);
         if (mapperData.isModifying()) {
             return sqlSession.executeUpdate(sql, args);
         }
@@ -64,8 +64,8 @@ public class MapperProxy implements MethodInterceptor {
     }
 
     private MapperData getMapperData(Method method) {
-        String fullMethodName = ClassUtil.getFullMethodName(method);
-        MapperData mapperData = MapperContainer.mapperMethodMap.get(fullMethodName);
+        String fullMethodName = ClassKit.getFullMethodName(method);
+        MapperData mapperData = MapperContainer.mapperMethodMap.get(method);
         if (mapperData == null) {
             if (!method.isAnnotationPresent(LSQuery.class)) {
                 //如果没有找到对应的SQL映射又没有LSQuery注解修饰就抛出异常
@@ -74,8 +74,16 @@ public class MapperProxy implements MethodInterceptor {
             LSQuery lsQuery = method.getAnnotation(LSQuery.class);
             String sql = lsQuery.value();
             boolean modifying = method.isAnnotationPresent(LSModifying.class);
-            mapperData = new MapperData(method, sql, modifying);
-            MapperContainer.mapperMethodMap.put(fullMethodName, mapperData);
+            String dataSourceName = StrKit.orDefault(lsQuery.dataSourceName(), () -> {
+                Class<?> clazz = method.getDeclaringClass();
+                if (!clazz.isAnnotationPresent(LSMapper.class)) {
+                    return null;
+                }
+                LSMapper mapper = clazz.getAnnotation(LSMapper.class);
+                return mapper.dataSourceName();
+            });
+            mapperData = new MapperData(method, sql, modifying, dataSourceName);
+            MapperContainer.mapperMethodMap.put(method, mapperData);
         }
         return mapperData;
     }

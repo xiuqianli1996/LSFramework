@@ -2,6 +2,7 @@ package com.ls.framework.jdbc.binding;
 
 import com.ls.framework.jdbc.annotation.LSDbParam;
 import com.ls.framework.jdbc.exception.LSJdbcException;
+import lombok.Getter;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -18,20 +19,28 @@ public class MapperData {
 //    private Method method;
     private boolean modifying;
 
-    public MapperData(Method method, String sql, boolean modifying) {
+    @Getter
+    private final String dataSourceName;
+
+    public MapperData(Method method, String sql, boolean modifying, String dataSourceName) {
         this.sql = sql;
         this.modifying = modifying;
+        this.dataSourceName = dataSourceName;
 //        this.method = method;
         int pos = 0;
         Matcher matcher = paramNamePattern.matcher(sql);
         while (matcher.find()) {
             String name = matcher.group(1);
             sqlParamNames.add(name);
-            sqlParamIndexMap.put(name, pos++);
+        }
+        for (Parameter parameter : method.getParameters()) {
+            LSDbParam lsDbParam = parameter.getAnnotation(LSDbParam.class);
+            sqlParamIndexMap.put(lsDbParam.value(), pos++);
         }
     }
 
     public String buildSql(Object[] params) {
+        // 占位符生成，可以考虑遍历填充preparedstatement参数的时候生成，减少一次O(n)循环
         String realSql = sql;
         for (Object obj : params) {
             String placeholder = "?";

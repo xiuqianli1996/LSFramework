@@ -1,5 +1,7 @@
 package com.ls.framework.jdbc.annotation;
 
+import com.ls.framework.jdbc.config.Constants;
+
 import java.lang.annotation.*;
 
 @Target({ElementType.METHOD})
@@ -8,5 +10,7 @@ import java.lang.annotation.*;
 public @interface LSQuery {
 
     String value();
+
+    String dataSourceName() default "";
 
 }

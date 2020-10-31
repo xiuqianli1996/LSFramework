@@ -29,15 +29,15 @@ public interface TestMapper2 {
     @LSQuery("SELECT * FROM  tbl_result")
     ResultBean[] selectArray();
 
-    @LSQuery("INSERT INTO tbl_result VALUES(${day}, ${result})")
+    @LSQuery("INSERT INTO tbl_result(`day`, `col_result`) VALUES(${day}, ${result})")
     @LSModifying
     long insert(@LSDbParam("result") String result, @LSDbParam("day") String day);
 
-    @LSQuery("UPDATE tbl_result SET result=${result} WHERE day = ${day}")
+    @LSQuery("UPDATE tbl_result SET col_result=${result} WHERE day = ${day}")
     @LSModifying
     long update(@LSDbParam("result") String result, @LSDbParam("day") String day);
 
-    @LSQuery("UPDATE tbl_result SET result=${result} WHERE day = ${day}")
+    @LSQuery("UPDATE tbl_result SET col_result=${result} WHERE day = ${day}")
     @LSModifying
     void updateWithoutReturn(@LSDbParam("result") String result, @LSDbParam("day") String day);
 

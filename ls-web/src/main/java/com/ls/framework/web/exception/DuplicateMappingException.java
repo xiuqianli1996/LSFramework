@@ -1,6 +1,5 @@
 package com.ls.framework.web.exception;
 
-import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.web.handler.ActionHandler;
 
 public class DuplicateMappingException extends RuntimeException {

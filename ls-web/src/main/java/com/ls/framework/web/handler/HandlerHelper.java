@@ -2,13 +2,11 @@ package com.ls.framework.web.handler;
 
 import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.web.annotation.LSRequestMapping;
-import com.ls.framework.web.loader.WebLoader;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

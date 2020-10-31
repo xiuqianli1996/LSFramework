@@ -1,34 +1,38 @@
 package com.ls.framework.jdbc;
 
-import com.ls.framework.core.annotation.LSBean;
-import com.ls.framework.core.annotation.LSConfiguration;
-import com.ls.framework.core.utils.PropKit;
+import com.ls.framework.common.kit.PropKit;
+import com.ls.framework.core.ApplicationContext;
+import com.ls.framework.ioc.annotation.LSAutowired;
+import com.ls.framework.ioc.annotation.LSBean;
 import com.ls.framework.jdbc.base.SimpleDataSource;
+import com.ls.framework.jdbc.config.Constants;
 import com.ls.framework.jdbc.config.LSDbConfiguration;
 import com.ls.framework.jdbc.executor.DefaultJdbcExecutor;
 import com.ls.framework.jdbc.executor.JdbcExecutor;
-import com.ls.framework.jdbc.session.MySqlSession;
+import com.ls.framework.jdbc.session.DefaultSqlSession;
 import com.ls.framework.jdbc.session.SqlSession;
 
 import javax.sql.DataSource;
 
-@LSConfiguration
+@LSBean
 public class JdbcConfig {
+
+    @LSAutowired
+    private ApplicationContext applicationContext;
 
     @LSBean("sqlSession")
     public SqlSession getSqlSession() {
-        String jdbcUrl = PropKit.get("jdbc.url");
-        String jdbcUser = PropKit.get("jdbc.user");
-        String jdbcPwd = PropKit.get("jdbc.pwd");
-        String jdbcDriver = PropKit.get("jdbc.driver");
+        String jdbcUrl = applicationContext.getProperty("jdbc.url");
+        String jdbcUser = applicationContext.getProperty("jdbc.user");
+        String jdbcPwd = applicationContext.getProperty("jdbc.pwd");
+        String jdbcDriver = applicationContext.getProperty("jdbc.driver");
         DataSource dataSource = new SimpleDataSource(jdbcUrl, jdbcUser, jdbcPwd, jdbcDriver);
         LSDbConfiguration configuration = new LSDbConfiguration();
-        configuration.setDataSource(dataSource);
+        configuration.getDataSources().put(Constants.DEFAULT_DATASOURCE_NAME, dataSource);
 
         JdbcExecutor executor = new DefaultJdbcExecutor(configuration.isMapUnderscoreToCamelCase());
-        configuration.setExecutor(executor);
 
-        return new MySqlSession(configuration);
+        return new DefaultSqlSession(configuration, executor);
     }
 
 }

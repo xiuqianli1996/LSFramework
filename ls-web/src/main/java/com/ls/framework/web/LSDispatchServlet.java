@@ -1,24 +1,18 @@
 package com.ls.framework.web;
 
 
-import com.ls.framework.core.annotation.LSBean;
-import com.ls.framework.core.context.ApplicationContext;
-import com.ls.framework.core.utils.ClassUtil;
 import com.ls.framework.web.context.RequestContext;
 import com.ls.framework.web.exception.LSMvcException;
 import com.ls.framework.web.handler.ActionHandler;
 import com.ls.framework.web.handler.HandlerContainer;
 import com.ls.framework.web.resolver.ExceptionResolverContainer;
 import com.ls.framework.web.resolver.ViewResolversContainer;
-import com.ls.framework.web.resolver.exception.ExceptionResolver;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 public class LSDispatchServlet extends HttpServlet {
 

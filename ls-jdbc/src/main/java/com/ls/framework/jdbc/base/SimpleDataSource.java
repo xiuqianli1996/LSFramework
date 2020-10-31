@@ -1,7 +1,7 @@
 package com.ls.framework.jdbc.base;
 
-import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.jdbc.exception.LSJdbcException;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
@@ -11,9 +11,10 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
+@Slf4j
 public class SimpleDataSource implements DataSource{
 
-    public static ThreadLocal<Connection> connectionHolder = new ThreadLocal<Connection>();
+    public static ThreadLocal<Connection> connectionHolder = new ThreadLocal<Connection>(); //todo remove
 
     protected String uri;
 
@@ -56,18 +57,12 @@ public class SimpleDataSource implements DataSource{
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new LSJdbcException(e);
         }
     }
 
-    public SimpleDataSource() {
-        super();
-    }
-
-
     public SimpleDataSource(String uri, String username, String password,
                             String driver) {
-        super();
         this.uri = uri;
         this.username = username;
         this.password = password;
@@ -75,40 +70,19 @@ public class SimpleDataSource implements DataSource{
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new LSJdbcException(e.getCause());
+            throw new LSJdbcException(e);
         }
-    }
-
-    private Connection connecting() throws SQLException {
-        return connecting(username, password);
-    }
-
-    private Connection connecting(String username, String password) throws SQLException{
-        return DriverManager.getConnection(uri, username, password);
     }
 
     @Override
     public synchronized Connection getConnection() throws SQLException{
-//        Connection conn = connectionHolder.get();
-//        if (conn == null){
-//            conn = connecting();
-//            connectionHolder.set(conn);
-////			conn.getClientInfo().put("status", ConnectionStatus.CONNECTED);
-//        }
-        return connecting();
+        return getConnection(username, password);
     }
 
     @Override
     public synchronized Connection getConnection(String username, String password)
             throws SQLException {
-//        Connection conn = connectionHolder.get();
-//        if (conn == null){
-//            conn = connecting(username, password);
-//            connectionHolder.set(conn);
-////			conn.getClientInfo().put("status", ConnectionStatus.CONNECTED);
-//        }
-        return connecting(username, password);
+        return DriverManager.getConnection(uri, username, password);
     }
 
     @Override
@@ -123,17 +97,17 @@ public class SimpleDataSource implements DataSource{
 
     @Override
     public void setLoginTimeout(int seconds) throws SQLException {
-
+        DriverManager.setLoginTimeout(seconds);
     }
 
     @Override
     public int getLoginTimeout() throws SQLException {
-        return 0;
+        return DriverManager.getLoginTimeout();
     }
 
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        return null;
+        throw new SQLFeatureNotSupportedException();
     }
 
     @Override

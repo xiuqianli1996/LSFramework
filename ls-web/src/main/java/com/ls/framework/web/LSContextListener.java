@@ -1,9 +1,6 @@
 package com.ls.framework.web;
 
-import com.ls.framework.core.context.ApplicationContext;
-import com.ls.framework.core.utils.ClassUtil;
-import com.ls.framework.core.utils.PropKit;
-import com.ls.framework.core.utils.StringKit;
+import com.ls.framework.core.ApplicationContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -17,7 +14,7 @@ public class LSContextListener implements ServletContextListener {
         ServletContext servletContext = sce.getServletContext();
 
         String configLocation = servletContext.getInitParameter("contextConfigLocation");
-        ApplicationContext applicationContext = new ApplicationContext(configLocation);
+        ApplicationContext applicationContext = new ApplicationContext(configLocation, includePackages, excludePackages);
         applicationContext.init();
 
         registerDefaultServlet(servletContext);

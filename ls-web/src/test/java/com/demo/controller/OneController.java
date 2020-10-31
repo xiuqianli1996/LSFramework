@@ -1,10 +1,8 @@
 package com.demo.controller;
 
 import com.ls.framework.core.annotation.LSAround;
-import com.ls.framework.core.annotation.LSAutowired;
 import com.ls.framework.core.annotation.LSBean;
 import com.ls.framework.core.annotation.LSClear;
-import com.ls.framework.core.ioc.BeanContainer;
 import com.ls.framework.web.annotation.LSPathParam;
 import com.ls.framework.web.annotation.LSRequestMapping;
 import com.ls.framework.web.annotation.LSRequestParam;
