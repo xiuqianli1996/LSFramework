@@ -14,6 +14,7 @@
     <module>ls-aop</module>
 <!--    <module>ls-web</module>-->
     <module>ls-jdbc</module>
+      <module>ls-rpc</module>
   </modules>
   <packaging>pom</packaging>
 
@@ -81,6 +82,11 @@
       <dependency>
         <groupId>com.ls.framework</groupId>
         <artifactId>ls-jdbc</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.ls.framework</groupId>
+        <artifactId>ls-rpc</artifactId>
         <version>${project.version}</version>
       </dependency>
 

@@ -3,6 +3,13 @@
 #### 项目介绍
 手写山寨版"spring"，学习aop、ioc思想的demo，没看过spring的源码，因为实在是太庞大了，参考部分网上博客及开源代码完成。
 
+主要功能模块：
+
+- ioc
+- aop
+- jdbc
+- rpc
+
 #### 其他资源
 
 1. [测试项目 -- test-emxple分支](https://gitee.com/981764793/LSFramework/tree/test-example/)
